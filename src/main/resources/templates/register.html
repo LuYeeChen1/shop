@@ -8,32 +8,56 @@
 
 <h2>Register</h2>
 
+<!--
+    th:action="@{/register}"
+        → Submits the form via POST to /register
+
+    th:object="${registerDTO}"
+        → Binds the form fields to a RegisterDTO object received from the controller
+-->
 <form th:action="@{/register}" th:object="${registerDTO}" method="post">
 
+    <!-- Username field -->
     <div>
         <label>Username:</label>
+
+        <!-- th:field="*{username}" binds to registerDTO.username -->
         <input type="text" th:field="*{username}">
+
+        <!-- Field-level validation errors for 'username' -->
         <span th:if="${#fields.hasErrors('username')}"
               th:errors="*{username}"></span>
     </div>
 
+    <!-- Email field -->
     <div>
         <label>Email:</label>
+
+        <!-- Binds to registerDTO.email -->
         <input type="email" th:field="*{email}">
+
+        <!-- Validation errors for 'email' -->
         <span th:if="${#fields.hasErrors('email')}"
               th:errors="*{email}"></span>
     </div>
 
+    <!-- Password field -->
     <div>
         <label>Password:</label>
+
+        <!-- Binds to registerDTO.password -->
         <input type="password" th:field="*{password}">
+
+        <!-- Validation errors for 'password' -->
         <span th:if="${#fields.hasErrors('password')}"
               th:errors="*{password}"></span>
     </div>
 
+    <!-- Submit button -->
     <button type="submit">Register</button>
 </form>
 
+<!-- Back navigation -->
 <p><a th:href="@{/welcome}">Back to Welcome</a></p>
 
 </body>

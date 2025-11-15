@@ -8,6 +8,14 @@
 
 <h2>Registered Users</h2>
 
+<!--
+    Simple table displaying all registered users.
+
+    The "users" attribute comes from the controller:
+        model.addAttribute("users", userService.getAllUsers());
+
+    Each user is a UserModel object containing username + email.
+-->
 <table border="1">
     <thead>
     <tr>
@@ -15,7 +23,15 @@
         <th>Email</th>
     </tr>
     </thead>
+
     <tbody>
+    <!--
+        th:each loops through the users list.
+
+        For each iteration:
+            user.username → displayed in first column
+            user.email    → displayed in second column
+    -->
     <tr th:each="user : ${users}">
         <td th:text="${user.username}"></td>
         <td th:text="${user.email}"></td>
@@ -23,6 +39,7 @@
     </tbody>
 </table>
 
+<!-- Navigation link -->
 <p><a th:href="@{/welcome}">Back to Welcome</a></p>
 
 </body>

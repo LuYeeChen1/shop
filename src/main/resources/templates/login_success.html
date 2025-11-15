@@ -8,11 +8,23 @@
 
 <h2>Login Successful</h2>
 
+<!--
+    Displays a personalized greeting using the username
+    passed from the controller after login is successful.
+
+    Example: "Hello, YeeChen!"
+-->
 <p th:text="'Hello, ' + ${username} + '!'"></p>
 
+<!-- Navigation links shown after a successful login -->
 <p>
+    <!-- Link back to the Welcome page -->
     <a th:href="@{/welcome}">Go to Welcome</a> |
+
+    <!-- Link to view all registered users -->
     <a th:href="@{/users}">View Users</a> |
+
+    <!-- Logout link to clear the session -->
     <a th:href="@{/logout}">Logout</a>
 </p>
 

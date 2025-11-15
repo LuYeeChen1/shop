@@ -8,11 +8,23 @@
 
 <h2>Welcome to Shop Backend</h2>
 
+<!--
+    Main landing page of the application.
+    This page provides navigation to the three main features:
+    - User Registration
+    - Login
+    - View all registered users
+-->
 <p>Please choose an action:</p>
 
 <ul>
+    <!-- Link to registration form -->
     <li><a th:href="@{/register}">Register</a></li>
+
+    <!-- Link to login form -->
     <li><a th:href="@{/login}">Login</a></li>
+
+    <!-- Link to the list of all users -->
     <li><a th:href="@{/users}">View Registered Users</a></li>
 </ul>
 

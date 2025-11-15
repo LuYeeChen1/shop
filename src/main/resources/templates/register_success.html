@@ -8,10 +8,21 @@
 
 <h2>Registration Successful</h2>
 
+<!--
+    Displays a welcome message using the username
+    passed from the controller after successful registration.
+
+    Example output:
+    "Welcome, John!"
+-->
 <p th:text="'Welcome, ' + ${username} + '!'"></p>
 
+<!-- Navigation options after registering -->
 <p>
+    <!-- Link back to the welcome page -->
     <a th:href="@{/welcome}">Back to Welcome</a> |
+
+    <!-- Link to view all users currently registered -->
     <a th:href="@{/users}">View All Users</a>
 </p>
 

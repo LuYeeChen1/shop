@@ -17,52 +17,63 @@ public class LoginController {
 
     private final UserService userService;
 
-    // Constructor injection
+    // Constructor injection for UserService dependency
     public LoginController(UserService userService) {
         this.userService = userService;
     }
 
-    // Display login form
+    // Display the login page
     @GetMapping("/login")
     public String showLoginForm(Model model) {
+
+        // Add an empty LoginDTO object for form binding
         model.addAttribute("loginDTO", new LoginDTO());
-        return "login";
+
+        return "login"; // returns login.html
     }
 
-    // Process login submission
+    // Handle login form submission
     @PostMapping("/login")
     public String processLogin(
-            @Valid @ModelAttribute("loginDTO") LoginDTO loginDTO,
-            BindingResult bindingResult,
+            @Valid @ModelAttribute("loginDTO") LoginDTO loginDTO, // Bind form data to LoginDTO
+            BindingResult bindingResult,  // Holds validation errors, if any
             Model model,
-            HttpSession session
+            HttpSession session           // Session used to store logged-in user
     ) {
+
+        // If validation fails, reload the login page
         if (bindingResult.hasErrors()) {
             return "login";
         }
 
+        // Authenticate user based on email + password
         UserModel user = userService.authenticate(
                 loginDTO.getEmail(),
                 loginDTO.getPassword()
         );
 
+        // If authentication fails, return error message
         if (user == null) {
-            // Authentication failed
             model.addAttribute("loginError", "Invalid email or password");
-            return "login";
+            return "login"; // reload login page
         }
 
-        // Save user in session (simple login session)
+        // Save authenticated user into session to maintain login state
         session.setAttribute("loggedInUser", user);
 
+        // Add username to display in login_success.html
         model.addAttribute("username", user.getUsername());
-        return "login_success";
+
+        return "login_success"; // return login_success.html
     }
 
-    // Optional: logout endpoint
+    // Logout endpoint — clears the session and redirects to login page
     @GetMapping("/logout")
     public String logout(HttpSession session) {
+
+        // Invalidate the entire session (removes loggedInUser)
         session.invalidate();
-        return "redirect:/login";
+
+        return "redirect:/login"; // redirect back to login page
     }
 }
