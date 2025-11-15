@@ -21,14 +21,24 @@ public class InMemoryUserService implements UserService {
                 registerDTO.getPassword()
         );
 
-        // Save to the in-memory list
         users.add(userModel);
-
         return userModel;
     }
 
     @Override
     public List<UserModel> getAllUsers() {
         return users;
+    }
+
+    @Override
+    public UserModel authenticate(String email, String password) {
+        // Simple linear search for demo purposes
+        for (UserModel user : users) {
+            if (user.getEmail().equalsIgnoreCase(email)
+                    && user.getPassword().equals(password)) {
+                return user;
+            }
+        }
+        return null;
     }
 }

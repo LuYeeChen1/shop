@@ -5,7 +5,6 @@ import com.backend.shop.Model.UserModel;
 
 import java.util.List;
 
-//Used Interface Structure
 public interface UserService {
 
     // Register a new user and return the UserModel
@@ -13,4 +12,7 @@ public interface UserService {
 
     // Return all users saved in the system
     List<UserModel> getAllUsers();
+
+    // Authenticate user by email and password
+    UserModel authenticate(String email, String password);
 }
