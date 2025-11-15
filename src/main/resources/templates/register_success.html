@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration Success</title>
+</head>
+<body>
+
+<h2>Registration Successful</h2>
+
+<p th:text="'Welcome, ' + ${username} + '!'"></p>
+
+<p>
+    <a th:href="@{/welcome}">Back to Welcome</a> |
+    <a th:href="@{/users}">View All Users</a>
+</p>
+
+</body>
+</html>
