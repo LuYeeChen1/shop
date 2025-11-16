@@ -9,13 +9,13 @@ import java.util.List;
 public interface UserService {
 
     /**
-     * Register a new user with default role (CUSTOMER).
+     * Register a new user with default CUSTOMER role.
      * Returns the created UserModel, or null if the email is already registered.
      */
     UserModel registerNewUser(RegisterDTO registerDTO);
 
     /**
-     * Register a new user with a specific role (e.g. ADMIN, CUSTOMER).
+     * Register a new user with a specific role.
      * Returns the created UserModel, or null if the email is already registered.
      */
     UserModel registerNewUser(RegisterDTO registerDTO, UserRole role);

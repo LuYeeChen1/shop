@@ -21,6 +21,7 @@ public class InMemoryUserService implements UserService {
         adminDTO.setEmail("admin@shop.com");
         adminDTO.setPassword("123456");
 
+        // Admin account with ADMIN role
         registerNewUser(adminDTO, UserRole.ADMIN);
     }
 

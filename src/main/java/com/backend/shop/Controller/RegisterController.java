@@ -45,6 +45,7 @@ public class RegisterController {
             return "register";
         }
 
+        //createdUsername Showed in register_success.html
         model.addAttribute("createdUsername", createdUser.getUsername());
         return "register_success";
     }

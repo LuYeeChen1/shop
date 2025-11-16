@@ -20,12 +20,14 @@ public class RegisterService {
      */
     public UserModel register(RegisterDTO registerDTO) {
 
-        // Check if email is already in use
-        if (userService.emailExists(registerDTO.getEmail())) {
-            return null;
-        }
+        // Delegate registration logic to UserService.
+        // UserService will:
+        //  - check if email exists
+        //  - create the user with default CUSTOMER role
+        //  - return null if registration fails
+        UserModel createdUser = userService.registerNewUser(registerDTO);
 
-        // Delegate user creation to UserService
-        return userService.registerNewUser(registerDTO);
+        // If null is returned, we treat it as "email already registered"
+        return createdUser;
     }
 }
