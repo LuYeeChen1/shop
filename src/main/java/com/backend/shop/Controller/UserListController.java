@@ -26,8 +26,14 @@ public class UserListController {
             return "redirect:/login?needLogin=true";
         }
 
+        // Add logged-in user's username to the model
+        model.addAttribute("loggedInUsername", loggedInUser.getUsername());
+
+        // Add all users
         model.addAttribute("users", userService.getAllUsers());
+
         return "user_list";
     }
+
 
 }

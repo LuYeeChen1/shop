@@ -8,6 +8,11 @@
 
 <h2>Registered Users</h2>
 
+<!-- Show the logged-in username -->
+<div th:if="${loggedInUsername != null}">
+    <p th:text="'Logged in as: ' + ${loggedInUsername}"></p>
+</div>
+
 <table border="1">
     <thead>
     <tr>
@@ -23,7 +28,10 @@
     </tbody>
 </table>
 
-<p><a th:href="@{/welcome}">Back to Welcome</a></p>
+<p>
+    <a th:href="@{/welcome}">Back to Welcome</a> |
+    <a th:href="@{/logout}">Logout</a>
+</p>
 
 </body>
 </html>
