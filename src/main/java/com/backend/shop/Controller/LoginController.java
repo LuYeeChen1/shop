@@ -11,13 +11,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class LoginController {
 
     private final UserService userService;
 
-    //Use DTO To Control
     // Constructor injection
     public LoginController(UserService userService) {
         this.userService = userService;
@@ -25,8 +25,17 @@ public class LoginController {
 
     // Display login form
     @GetMapping("/login")
-    public String showLoginForm(Model model) {
+    public String showLoginForm(
+            Model model,
+            @RequestParam(value = "needLogin", required = false) String needLogin
+    ) {
         model.addAttribute("loginDTO", new LoginDTO());
+
+        // If user was redirected from a protected page
+        if ("true".equals(needLogin)) {
+            model.addAttribute("infoMessage", "Please log in before accessing that page.");
+        }
+
         return "login";
     }
 
@@ -53,7 +62,6 @@ public class LoginController {
             return "login";
         }
 
-        //Use Model To Store
         // Save user in session (simple login session)
         session.setAttribute("loggedInUser", user);
 
@@ -61,7 +69,6 @@ public class LoginController {
         return "login_success";
     }
 
-    // Optional: logout endpoint
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
