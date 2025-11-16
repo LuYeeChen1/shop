@@ -8,10 +8,27 @@
 
 <h2>Error Occurred</h2>
 
+<!-- Basic fields -->
 <p>Status: <span th:text="${status}"></span></p>
 <p>Error: <span th:text="${error}"></span></p>
 <p>Message: <span th:text="${message}"></span></p>
+<p>Exception: <span th:text="${exception}"></span></p>
+
+<!-- Timestamp -->
+<p>Timestamp: <span th:text="${timestamp}"></span></p>
+
+<!-- Request path -->
 <p>Path: <span th:text="${path}"></span></p>
+
+<!-- Stack trace (only available if include-stacktrace=always or on_param) -->
+<p>Trace:</p>
+<pre th:text="${trace}"></pre>
+
+<!-- Validation errors (if exist) -->
+<p>Errors:</p>
+<ul>
+    <li th:each="err : ${errors}" th:text="${err}"></li>
+</ul>
 
 <p><a th:href="@{/welcome}">Back to Welcome</a></p>
 
