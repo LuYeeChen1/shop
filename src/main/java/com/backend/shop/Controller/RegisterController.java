@@ -16,6 +16,7 @@ public class RegisterController {
 
     private final UserService userService;
 
+    //Use DTO To Control
     // Constructor injection
     public RegisterController(UserService userService) {
         this.userService = userService;
@@ -37,6 +38,7 @@ public class RegisterController {
             return "register";
         }
 
+        //Use Model To Store
         // Use service to handle registration
         UserModel userModel = userService.registerNewUser(registerDTO);
 

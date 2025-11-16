@@ -17,6 +17,7 @@ public class LoginController {
 
     private final UserService userService;
 
+    //Use DTO To Control
     // Constructor injection
     public LoginController(UserService userService) {
         this.userService = userService;
@@ -52,6 +53,7 @@ public class LoginController {
             return "login";
         }
 
+        //Use Model To Store
         // Save user in session (simple login session)
         session.setAttribute("loggedInUser", user);
 
