@@ -8,49 +8,35 @@
 
 <h2>Login</h2>
 
-<!--
-    th:action="@{/login}"
-    → Form submits POST request to /login
+<!-- Info message when redirected from a protected page -->
+<div th:if="${infoMessage != null}">
+    <p style="color: blue;" th:text="${infoMessage}"></p>
+</div>
 
-    th:object="${loginDTO}"
-    → Binds form fields to the LoginDTO object passed from the controller
--->
 <form th:action="@{/login}" th:object="${loginDTO}" method="post">
 
-    <!-- Email field -->
     <div>
         <label>Email:</label>
-
-        <!-- th:field="*{email}" binds the input to loginDTO.email -->
         <input type="email" th:field="*{email}">
-
-        <!-- Field-level validation errors for 'email' -->
         <span th:if="${#fields.hasErrors('email')}"
               th:errors="*{email}"></span>
     </div>
 
-    <!-- Password field -->
     <div>
         <label>Password:</label>
-
-        <!-- Binds to loginDTO.password -->
         <input type="password" th:field="*{password}">
-
-        <!-- Field-level validation errors for 'password' -->
         <span th:if="${#fields.hasErrors('password')}"
               th:errors="*{password}"></span>
     </div>
 
-    <!-- Login failure message (email not found / wrong password) -->
+    <!-- Login error message -->
     <div th:if="${loginError != null}">
         <p style="color: red;" th:text="${loginError}"></p>
     </div>
 
-    <!-- Submit button -->
     <button type="submit">Login</button>
 </form>
 
-<!-- Navigation links -->
 <p>
     <a th:href="@{/welcome}">Back to Welcome</a> |
     <a th:href="@{/register}">Register</a>

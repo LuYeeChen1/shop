@@ -11,69 +11,67 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class LoginController {
 
     private final UserService userService;
 
-    // Constructor injection for UserService dependency
+    // Constructor injection
     public LoginController(UserService userService) {
         this.userService = userService;
     }
 
-    // Display the login page
+    // Display login form
     @GetMapping("/login")
-    public String showLoginForm(Model model) {
-
-        // Add an empty LoginDTO object for form binding
+    public String showLoginForm(
+            Model model,
+            @RequestParam(value = "needLogin", required = false) String needLogin
+    ) {
         model.addAttribute("loginDTO", new LoginDTO());
 
-        return "login"; // returns login.html
+        // If user was redirected from a protected page
+        if ("true".equals(needLogin)) {
+            model.addAttribute("infoMessage", "Please log in before accessing that page.");
+        }
+
+        return "login";
     }
 
-    // Handle login form submission
+    // Process login submission
     @PostMapping("/login")
     public String processLogin(
-            @Valid @ModelAttribute("loginDTO") LoginDTO loginDTO, // Bind form data to LoginDTO
-            BindingResult bindingResult,  // Holds validation errors, if any
+            @Valid @ModelAttribute("loginDTO") LoginDTO loginDTO,
+            BindingResult bindingResult,
             Model model,
-            HttpSession session           // Session used to store logged-in user
+            HttpSession session
     ) {
-
-        // If validation fails, reload the login page
         if (bindingResult.hasErrors()) {
             return "login";
         }
 
-        // Authenticate user based on email + password
         UserModel user = userService.authenticate(
                 loginDTO.getEmail(),
                 loginDTO.getPassword()
         );
 
-        // If authentication fails, return error message
         if (user == null) {
+            // Authentication failed
             model.addAttribute("loginError", "Invalid email or password");
-            return "login"; // reload login page
+            return "login";
         }
 
-        // Save authenticated user into session to maintain login state
+        // Save user in session (simple login session)
         session.setAttribute("loggedInUser", user);
 
-        // Add username to display in login_success.html
         model.addAttribute("username", user.getUsername());
-
-        return "login_success"; // return login_success.html
+        return "login_success";
     }
 
-    // Logout endpoint — clears the session and redirects to login page
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-
-        // Invalidate the entire session (removes loggedInUser)
         session.invalidate();
-
-        return "redirect:/login"; // redirect back to login page
+        return "redirect:/login";
     }
 }

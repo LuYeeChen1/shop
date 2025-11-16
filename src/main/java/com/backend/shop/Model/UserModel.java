@@ -25,6 +25,7 @@ public class UserModel {
     // Getter for username
     public String getUsername() {
         return username;
+
     }
 
     // Setter for username

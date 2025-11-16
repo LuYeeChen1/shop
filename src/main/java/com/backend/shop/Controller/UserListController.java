@@ -1,6 +1,8 @@
 package com.backend.shop.Controller;
 
+import com.backend.shop.Model.UserModel;
 import com.backend.shop.Service.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,23 +12,28 @@ public class UserListController {
 
     private final UserService userService;
 
-    // Constructor injection for UserService
+    // Constructor injection
     public UserListController(UserService userService) {
         this.userService = userService;
     }
 
-    // Display the list of all users
-    // NOTE:
-    //  - Currently, this endpoint is PUBLIC. Anyone can access /users.
-    //  - In the future (when database + roles are added), this will be changed
-    //    to restrict access to ADMIN users only.
     @GetMapping("/users")
-    public String showUsers(Model model) {
+    public String showUsers(Model model, HttpSession session) {
+        UserModel loggedInUser = (UserModel) session.getAttribute("loggedInUser");
 
-        // Fetch all users from the service layer
-        // The "users" attribute will be displayed in user_list.html
+        if (loggedInUser == null) {
+            // Not logged in, redirect to login page with a query parameter
+            return "redirect:/login?needLogin=true";
+        }
+
+        // Add logged-in user's username to the model
+        model.addAttribute("loggedInUsername", loggedInUser.getUsername());
+
+        // Add all users
         model.addAttribute("users", userService.getAllUsers());
 
-        return "user_list"; // returns user_list.html
+        return "user_list";
     }
+
+
 }
