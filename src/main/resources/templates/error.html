@@ -8,13 +8,15 @@
 
 <h2>Something went wrong</h2>
 
-<!-- Simple system error info from Spring Boot -->
+<!-- Basic system error information from Spring Boot -->
 <p>Status: <span th:text="${status}">status</span></p>
 <p>Error: <span th:text="${error}">error</span></p>
 <p>Message: <span th:text="${message}">message</span></p>
 <p>Path: <span th:text="${path}">path</span></p>
 
-<p><a th:href="@{/welcome}">Back to Welcome</a></p>
+<p>
+    <a th:href="@{/welcome}">Back to Welcome</a>
+</p>
 
 </body>
 </html>
