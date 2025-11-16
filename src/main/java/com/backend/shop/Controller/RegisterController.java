@@ -2,7 +2,7 @@ package com.backend.shop.Controller;
 
 import com.backend.shop.DataTransferObject.RegisterDTO;
 import com.backend.shop.Model.UserModel;
-import com.backend.shop.Service.UserService;
+import com.backend.shop.Service.RegisterService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,11 +14,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class RegisterController {
 
-    private final UserService userService;
+    private final RegisterService registerService;
 
-    // Constructor injection
-    public RegisterController(UserService userService) {
-        this.userService = userService;
+    public RegisterController(RegisterService registerService) {
+        this.registerService = registerService;
     }
 
     @GetMapping("/register")
@@ -37,19 +36,16 @@ public class RegisterController {
             return "register";
         }
 
-        // Call service to register new user
-        UserModel userModel = userService.registerNewUser(registerDTO);
+        // Delegate registration logic to RegisterService
+        UserModel createdUser = registerService.register(registerDTO);
 
-        // If userModel is null, it means email already exists
-        if (userModel == null) {
-            model.addAttribute("emailError", "This email is already registered.");
+        if (createdUser == null) {
+            // Email is already registered (handled by RegisterService)
+            model.addAttribute("registerError", "Email is already registered.");
             return "register";
         }
 
-        // Registration success
-        model.addAttribute("username", userModel.getUsername());
+        model.addAttribute("createdUsername", createdUser.getUsername());
         return "register_success";
     }
-
-
 }
