@@ -11,6 +11,9 @@ public class UserModel {
     // Represents the user's password (in real applications, should be hashed)
     private String password;
 
+    // Represents the role of the user (e.g. ADMIN, CUSTOMER)
+    private UserRole userRole;
+
     // Default constructor required by Spring and frameworks
     public UserModel() {
     }
@@ -25,7 +28,6 @@ public class UserModel {
     // Getter for username
     public String getUsername() {
         return username;
-
     }
 
     // Setter for username
@@ -51,5 +53,15 @@ public class UserModel {
     // Setter for password
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    // Getter for userRole
+    public UserRole getUserRole() {
+        return userRole;
+    }
+
+    // Setter for userRole
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
     }
 }

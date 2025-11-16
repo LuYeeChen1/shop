@@ -2,6 +2,7 @@ package com.backend.shop.Service;
 
 import com.backend.shop.DataTransferObject.RegisterDTO;
 import com.backend.shop.Model.UserModel;
+import com.backend.shop.Model.UserRole;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -13,8 +14,24 @@ public class InMemoryUserService implements UserService {
     // This list works as an in-memory database
     private final List<UserModel> users = new ArrayList<>();
 
+    public InMemoryUserService() {
+        // Create a default admin account when the application starts
+        RegisterDTO adminDTO = new RegisterDTO();
+        adminDTO.setUsername("admin");
+        adminDTO.setEmail("admin@shop.com");
+        adminDTO.setPassword("123456");
+
+        registerNewUser(adminDTO, UserRole.ADMIN);
+    }
+
     @Override
     public UserModel registerNewUser(RegisterDTO registerDTO) {
+        // Default role: CUSTOMER
+        return registerNewUser(registerDTO, UserRole.CUSTOMER);
+    }
+
+    @Override
+    public UserModel registerNewUser(RegisterDTO registerDTO, UserRole role) {
 
         // Check if email already exists
         if (emailExists(registerDTO.getEmail())) {
@@ -27,6 +44,9 @@ public class InMemoryUserService implements UserService {
                 registerDTO.getEmail(),
                 registerDTO.getPassword()
         );
+
+        // Set the role for the new user
+        userModel.setUserRole(role);
 
         users.add(userModel);
         return userModel;
@@ -58,5 +78,10 @@ public class InMemoryUserService implements UserService {
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean isAdmin(UserModel user) {
+        return user != null && user.getUserRole() == UserRole.ADMIN;
     }
 }

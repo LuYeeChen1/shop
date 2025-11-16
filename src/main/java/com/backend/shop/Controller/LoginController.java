@@ -2,6 +2,7 @@ package com.backend.shop.Controller;
 
 import com.backend.shop.DataTransferObject.LoginDTO;
 import com.backend.shop.Model.UserModel;
+import com.backend.shop.Model.UserRole;
 import com.backend.shop.Service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -65,9 +66,18 @@ public class LoginController {
         // Save user in session (simple login session)
         session.setAttribute("loggedInUser", user);
 
+        // ★ New: Save role in session
+        if (user.getUserRole() != null) {
+            session.setAttribute("userRole", user.getUserRole());
+        } else {
+            // Optional: default role if null
+            session.setAttribute("userRole", UserRole.CUSTOMER);
+        }
+
         model.addAttribute("username", user.getUsername());
         return "login_success";
     }
+
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
