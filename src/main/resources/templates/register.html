@@ -20,9 +20,16 @@
     <div>
         <label>Email:</label>
         <input type="email" th:field="*{email}">
+
         <span th:if="${#fields.hasErrors('email')}"
               th:errors="*{email}"></span>
+
+        <!-- Duplicate email error -->
+        <div th:if="${emailError != null}">
+            <p style="color:red;" th:text="${emailError}"></p>
+        </div>
     </div>
+
 
     <div>
         <label>Password:</label>

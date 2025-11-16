@@ -15,20 +15,48 @@ public class InMemoryUserService implements UserService {
 
     @Override
     public UserModel registerNewUser(RegisterDTO registerDTO) {
+
+        // Check if email already exists
+        if (emailExists(registerDTO.getEmail())) {
+            // Email already registered, return null to indicate failure
+            return null;
+        }
+
         UserModel userModel = new UserModel(
                 registerDTO.getUsername(),
                 registerDTO.getEmail(),
                 registerDTO.getPassword()
         );
 
-        // Save to the in-memory list
         users.add(userModel);
-
         return userModel;
     }
 
     @Override
     public List<UserModel> getAllUsers() {
         return users;
+    }
+
+    @Override
+    public UserModel authenticate(String email, String password) {
+        // Simple authentication: check email and password match
+        for (UserModel user : users) {
+            if (user.getEmail().equalsIgnoreCase(email)
+                    && user.getPassword().equals(password)) {
+                return user;
+            }
+        }
+        // No matching user found
+        return null;
+    }
+
+    @Override
+    public boolean emailExists(String email) {
+        for (UserModel user : users) {
+            if (user.getEmail().equalsIgnoreCase(email)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
