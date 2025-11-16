@@ -8,29 +8,25 @@ import java.util.List;
 public interface UserService {
 
     /**
-     * Register a new user using the data provided in RegisterDTO.
-     * This method should create a UserModel object and store it (in-memory or database).
-     *
-     * @param registerDTO The data submitted by the user during registration.
-     * @return The created UserModel instance.
+     * Register a new user.
+     * Returns the created UserModel, or null if the email is already registered.
      */
     UserModel registerNewUser(RegisterDTO registerDTO);
 
     /**
-     * Retrieve all users stored in the system.
-     * In production, this would likely be limited or restricted (e.g., admin only).
-     *
-     * @return A list of UserModel objects.
+     * Get a list of all registered users.
      */
     List<UserModel> getAllUsers();
 
     /**
-     * Authenticate the user using email and password.
-     * Should return a UserModel if the credentials are valid, or null if not.
-     *
-     * @param email    The email entered by the user.
-     * @param password The password entered by the user.
-     * @return The authenticated UserModel, or null if authentication fails.
+     * Authenticate a user by email and password.
+     * Returns the UserModel if valid, otherwise null.
      */
     UserModel authenticate(String email, String password);
+
+    /**
+     * Check if an email is already registered.
+     * Returns true if email exists, otherwise false.
+     */
+    boolean emailExists(String email);
 }

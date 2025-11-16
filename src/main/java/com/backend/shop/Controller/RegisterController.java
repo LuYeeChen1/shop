@@ -16,7 +16,6 @@ public class RegisterController {
 
     private final UserService userService;
 
-    //Use DTO To Control
     // Constructor injection
     public RegisterController(UserService userService) {
         this.userService = userService;
@@ -38,13 +37,19 @@ public class RegisterController {
             return "register";
         }
 
-        //Use Model To Store
-        // Use service to handle registration
+        // Call service to register new user
         UserModel userModel = userService.registerNewUser(registerDTO);
 
-        model.addAttribute("username", userModel.getUsername());
+        // If userModel is null, it means email already exists
+        if (userModel == null) {
+            model.addAttribute("emailError", "This email is already registered.");
+            return "register";
+        }
 
+        // Registration success
+        model.addAttribute("username", userModel.getUsername());
         return "register_success";
     }
+
 
 }

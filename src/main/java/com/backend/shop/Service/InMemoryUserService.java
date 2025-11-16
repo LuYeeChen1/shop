@@ -10,50 +10,53 @@ import java.util.List;
 @Service
 public class InMemoryUserService implements UserService {
 
-    // Acts as an in-memory database.
-    // This list stores all registered users during the runtime of the application.
+    // This list works as an in-memory database
     private final List<UserModel> users = new ArrayList<>();
 
-    // Registers a new user using data from RegisterDTO
     @Override
     public UserModel registerNewUser(RegisterDTO registerDTO) {
 
-        // Convert DTO to UserModel (domain model)
+        // Check if email already exists
+        if (emailExists(registerDTO.getEmail())) {
+            // Email already registered, return null to indicate failure
+            return null;
+        }
+
         UserModel userModel = new UserModel(
                 registerDTO.getUsername(),
                 registerDTO.getEmail(),
                 registerDTO.getPassword()
         );
 
-        // Store the user in the in-memory list
         users.add(userModel);
-
-        // Return created user object
         return userModel;
     }
 
-    // Returns all users stored in memory
     @Override
     public List<UserModel> getAllUsers() {
         return users;
     }
 
-    // Authenticate by checking email + password
-    // Very simple logic — works only for demo purposes
     @Override
     public UserModel authenticate(String email, String password) {
-
-        // Loop through all registered users
+        // Simple authentication: check email and password match
         for (UserModel user : users) {
-
-            // Check for matching email and password
             if (user.getEmail().equalsIgnoreCase(email)
                     && user.getPassword().equals(password)) {
-                return user; // Authentication success
+                return user;
             }
         }
-
-        // No matching user found → authentication failed
+        // No matching user found
         return null;
+    }
+
+    @Override
+    public boolean emailExists(String email) {
+        for (UserModel user : users) {
+            if (user.getEmail().equalsIgnoreCase(email)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
