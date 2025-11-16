@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>404 Not Found</title>
+</head>
+<body>
+
+<h2>404 - Page Not Found</h2>
+
+<p>The page you requested does not exist.</p>
+<p>Path: <span th:text="${path}"></span></p>
+
+<p><a th:href="@{/welcome}">Back to Welcome</a></p>
+
+</body>
+</html>
