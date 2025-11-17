@@ -14,6 +14,7 @@ public class LoginDTO {
 
     // Password field for login
     // @NotBlank    → Ensures the password is provided
+    @NotBlank(message = "Password is required")
     private String password;
 
     // Getter for email
