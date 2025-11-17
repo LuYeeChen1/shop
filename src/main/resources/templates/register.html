@@ -24,11 +24,11 @@
         <span th:if="${#fields.hasErrors('email')}"
               th:errors="*{email}"></span>
 
-        <!-- Duplicate email error -->
-        <div th:if="${emailError != null}">
-            <p style="color:red;" th:text="${emailError}"></p>
+        <div th:if="${registerError != null}">
+            <p style="color:red;" th:text="${registerError}"></p>
         </div>
     </div>
+
 
 
     <div>
