@@ -1,7 +1,7 @@
 package com.backend.shop.Controller;
 
 import com.backend.shop.Model.UserModel;
-import com.backend.shop.Service.Interface.UserAdminService;
+import com.backend.shop.Service.UserAdminService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

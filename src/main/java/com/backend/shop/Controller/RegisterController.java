@@ -2,7 +2,7 @@ package com.backend.shop.Controller;
 
 import com.backend.shop.DataTransferObject.RegisterDTO;
 import com.backend.shop.Model.UserModel;
-import com.backend.shop.Service.Impl.RegisterServiceImpl;
+import com.backend.shop.Service.RegisterService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class RegisterController {
 
-    private final RegisterServiceImpl registerServiceImpl;
+    private final RegisterService registerService;
 
-    public RegisterController(RegisterServiceImpl registerServiceImpl) {
-        this.registerServiceImpl = registerServiceImpl;
+    public RegisterController(RegisterService registerService) {
+        this.registerService = registerService;
     }
 
     @GetMapping("/register")
@@ -37,7 +37,7 @@ public class RegisterController {
         }
 
         // Delegate registration logic to RegisterService
-        UserModel createdUser = registerServiceImpl.register(registerDTO);
+        UserModel createdUser = registerService.register(registerDTO);
 
         if (createdUser == null) {
             // Email is already registered (handled by RegisterService)

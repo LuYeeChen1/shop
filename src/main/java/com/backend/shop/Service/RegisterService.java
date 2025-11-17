@@ -1,16 +1,15 @@
-package com.backend.shop.Service.Impl;
+package com.backend.shop.Service;
 
 import com.backend.shop.DataTransferObject.RegisterDTO;
 import com.backend.shop.Model.UserModel;
-import com.backend.shop.Service.Interface.UserService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RegisterServiceImpl {
+public class RegisterService {
 
     private final UserService userService;
 
-    public RegisterServiceImpl(UserService userService) {
+    public RegisterService(UserService userService) {
         this.userService = userService;
     }
 

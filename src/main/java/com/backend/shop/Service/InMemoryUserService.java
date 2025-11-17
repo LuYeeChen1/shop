@@ -1,21 +1,20 @@
-package com.backend.shop.Service.Impl;
+package com.backend.shop.Service;
 
 import com.backend.shop.DataTransferObject.RegisterDTO;
 import com.backend.shop.Model.UserModel;
 import com.backend.shop.Model.UserRole;
-import com.backend.shop.Service.Interface.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class InMemoryUserServiceImpl implements UserService {
+public class InMemoryUserService implements UserService {
 
     // This list works as an in-memory database
     private final List<UserModel> users = new ArrayList<>();
 
-    public InMemoryUserServiceImpl() {
+    public InMemoryUserService() {
         // Create a default admin account when the application starts
         RegisterDTO adminDTO = new RegisterDTO();
         adminDTO.setUsername("admin");
