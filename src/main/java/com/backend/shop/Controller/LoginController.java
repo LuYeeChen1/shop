@@ -2,7 +2,7 @@ package com.backend.shop.Controller;
 
 import com.backend.shop.DataTransferObject.LoginDTO;
 import com.backend.shop.Model.UserModel;
-import com.backend.shop.Service.LoginService;
+import com.backend.shop.Service.Impl.LoginServiceImpl;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class LoginController {
 
-    private final LoginService loginService;
+    private final LoginServiceImpl loginServiceImpl;
 
     // Constructor injection
-    public LoginController(LoginService loginService) {
-        this.loginService = loginService;
+    public LoginController(LoginServiceImpl loginServiceImpl) {
+        this.loginServiceImpl = loginServiceImpl;
     }
 
     // Display login form
@@ -53,7 +53,7 @@ public class LoginController {
         }
 
         // Delegate login logic to LoginService
-        UserModel user = loginService.login(loginDTO);
+        UserModel user = loginServiceImpl.login(loginDTO);
 
         if (user == null) {
             model.addAttribute("loginError", "Invalid email or password");

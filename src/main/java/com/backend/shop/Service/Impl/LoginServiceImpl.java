@@ -1,17 +1,18 @@
-package com.backend.shop.Service;
+package com.backend.shop.Service.Impl;
 
 import com.backend.shop.DataTransferObject.LoginDTO;
 import com.backend.shop.Model.UserModel;
+import com.backend.shop.Service.Interface.UserService;
 import org.springframework.stereotype.Service;
 
 //Service Is Brain
 
 @Service
-public class LoginService {
+public class LoginServiceImpl {
 
     private final UserService userService;
 
-    public LoginService(UserService userService) {
+    public LoginServiceImpl(UserService userService) {
         this.userService = userService;
     }
 

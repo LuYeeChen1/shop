@@ -1,4 +1,4 @@
-package com.backend.shop.Service;
+package com.backend.shop.Service.Interface;
 
 import com.backend.shop.DataTransferObject.RegisterDTO;
 import com.backend.shop.Model.UserModel;
