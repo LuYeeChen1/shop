@@ -4,6 +4,7 @@ import com.backend.shop.DataTransferObject.RegisterDTO;
 import com.backend.shop.Model.UserModel;
 import com.backend.shop.Model.UserRole;
 import com.backend.shop.Repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,34 +14,60 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder; // Add encoder field
 
-    public UserServiceImpl(UserRepository userRepository) {
+    // Inject repository and password encoder
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     @Transactional
     public UserModel registerNewUser(RegisterDTO registerDTO) {
 
+        // Check if email already exists in database
         if (userRepository.existsByEmail(registerDTO.getEmail())) {
-            return null; // duplicate email
+            // Email already registered, return null to indicate failure
+            return null;
         }
 
-        UserModel user = new UserModel();
-        user.setEmail(registerDTO.getEmail());
-        user.setUsername(registerDTO.getUsername());
-        user.setPassword(registerDTO.getPassword());
-        user.setRole(UserRole.CUSTOMER);
+        // Map DTO to entity
+        UserModel userModel = new UserModel();
+        userModel.setEmail(registerDTO.getEmail());
+        userModel.setUsername(registerDTO.getUsername());
 
-        return userRepository.save(user);
+        // Encrypt the raw password before saving
+        // NEVER store plain text passwords in the database
+        String encodedPassword = passwordEncoder.encode(registerDTO.getPassword());
+        userModel.setPassword(encodedPassword);
+
+        userModel.setRole(UserRole.CUSTOMER);
+
+        // Save user to database
+        return userRepository.save(userModel);
     }
 
+
     @Override
-    public UserModel authenticate(String email, String password) {
+    public UserModel authenticate(String email, String rawPassword) {
+        // Find user by email
         UserModel user = userRepository.findByEmail(email);
-        if (user != null && user.getPassword().equals(password)) {
+
+        if (user == null) {
+            // User not found
+            return null;
+        }
+
+        // Check if raw password matches the encoded password in database
+        // passwordEncoder.matches() handles BCrypt hash comparison safely
+        boolean passwordMatches = passwordEncoder.matches(rawPassword, user.getPassword());
+
+        if (passwordMatches) {
             return user;
         }
+
+        // Password does not match
         return null;
     }
 
