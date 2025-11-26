@@ -1,14 +1,53 @@
 package com.backend.shop.Repository;
 
-import com.backend.shop.Model.UserModel;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
-// The primary key type is String because email is the @Id
-public interface UserRepository extends JpaRepository<UserModel, String> {
+@Repository
+public class UserRepository {
 
-    // Check if a user exists by email
-    boolean existsByEmail(String email);
+    private final JdbcTemplate jdbcTemplate;
 
-    // Find a user by email
-    UserModel findByEmail(String email);
+    public UserRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    // 1. Check if email exists across all role tables
+    public boolean emailExists(String email) {
+        return existsInAdmin(email) || existsInCustomer(email) || existsInSeller(email);
+    }
+
+    public boolean existsInAdmin(String email) {
+        String sql = "SELECT COUNT(*) FROM admin_table WHERE email = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, email);
+        return count != null && count > 0;
+    }
+
+    public boolean existsInCustomer(String email) {
+        String sql = "SELECT COUNT(*) FROM customer_table WHERE email = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, email);
+        return count != null && count > 0;
+    }
+
+    public boolean existsInSeller(String email) {
+        String sql = "SELECT COUNT(*) FROM seller_table WHERE email = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, email);
+        return count != null && count > 0;
+    }
+
+    // 2. Detect which role this email belongs to
+    public String detectRole(String email) {
+
+        if (existsInAdmin(email)) {
+            return "ADMIN";
+        }
+        if (existsInCustomer(email)) {
+            return "CUSTOMER";
+        }
+        if (existsInSeller(email)) {
+            return "SELLER";
+        }
+
+        return null; // Not found in any table
+    }
 }

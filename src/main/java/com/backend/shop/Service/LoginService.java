@@ -1,11 +1,15 @@
 package com.backend.shop.Service;
 
 import com.backend.shop.DataTransferObject.LoginDTO;
-import com.backend.shop.Model.UserModel;
+import com.backend.shop.Model.AuthenticatedUser;
 import org.springframework.stereotype.Service;
 
-//Service Is Brain
-
+/**
+ * LoginService acts as the main coordinator for user login.
+ * It delegates the actual authentication logic to UserService.
+ * This version supports multiple user roles (Admin, Customer, Seller)
+ * and returns a unified AuthenticatedUser object.
+ */
 @Service
 public class LoginService {
 
@@ -16,14 +20,17 @@ public class LoginService {
     }
 
     /**
-     * Handle the login logic for a user.
-     * Returns the authenticated UserModel if successful, otherwise null.
+     * Process user login using the provided LoginDTO.
+     * Delegates authentication to UserService.
+     *
+     * @param loginDTO Contains the email and password submitted by the user
+     * @return AuthenticatedUser if credentials are valid, otherwise null
      */
-    public UserModel login(LoginDTO loginDTO) {
+    public AuthenticatedUser login(LoginDTO loginDTO) {
         String email = loginDTO.getEmail();
-        String password = loginDTO.getPassword();
+        String rawPassword = loginDTO.getPassword();
 
         // Delegate authentication to UserService
-        return userService.authenticate(email, password);
+        return userService.authenticate(email, rawPassword);
     }
 }
