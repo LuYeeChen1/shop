@@ -2,43 +2,24 @@ package com.backend.shop.Service;
 
 import com.backend.shop.DataTransferObject.RegisterDTO;
 import com.backend.shop.Model.UserModel;
-import com.backend.shop.Model.UserRole;
 
 import java.util.List;
 
+// This interface defines user-related operations
 public interface UserService {
 
-    /**
-     * Register a new user with default CUSTOMER role.
-     * Returns the created UserModel, or null if the email is already registered.
-     */
+    // Register a new user with default role
     UserModel registerNewUser(RegisterDTO registerDTO);
 
-    /**
-     * Register a new user with a specific role.
-     * Returns the created UserModel, or null if the email is already registered.
-     */
-    UserModel registerNewUser(RegisterDTO registerDTO, UserRole role);
-
-    /**
-     * Get a list of all registered users.
-     */
-    List<UserModel> getAllUsers();
-
-    /**
-     * Authenticate a user by email and password.
-     * Returns the UserModel if valid, otherwise null.
-     */
+    // Authenticate user by email and password
     UserModel authenticate(String email, String password);
 
-    /**
-     * Check if an email is already registered.
-     * Returns true if email exists, otherwise false.
-     */
+    // Check if email already exists
     boolean emailExists(String email);
 
-    /**
-     * Check whether a given user has ADMIN role.
-     */
+    // Get all users (for listing)
+    List<UserModel> getAllUsers();
+
+    // Check if the user is an admin
     boolean isAdmin(UserModel user);
 }

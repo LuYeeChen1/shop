@@ -1,18 +1,24 @@
 package com.backend.shop.Model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "users")
 public class UserModel {
 
-    // Represents the user's chosen username
-    private String username;
-
-    // Represents the user's email address (unique identifier for login)
+    @Id
+    @Column(nullable = false, unique = true, length = 100)
     private String email;
 
-    // Represents the user's password (in real applications, should be hashed)
+    @Column(nullable = false)
+    private String username;
+
+    @Column(nullable = false)
     private String password;
 
-    // Represents the role of the user (e.g. ADMIN, CUSTOMER)
-    private UserRole userRole;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserRole role;
 
     // Default constructor required by Spring and frameworks
     public UserModel() {
@@ -55,13 +61,11 @@ public class UserModel {
         this.password = password;
     }
 
-    // Getter for userRole
-    public UserRole getUserRole() {
-        return userRole;
+    public UserRole getRole() {
+        return role;
     }
 
-    // Setter for userRole
-    public void setUserRole(UserRole userRole) {
-        this.userRole = userRole;
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 }
