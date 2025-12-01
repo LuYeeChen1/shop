@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Role Switch</title>
+</head>
+<body>
+
+<h2>Role Management</h2>
+
+<p>
+    Current Role:
+    <strong th:text="${loggedInUser.userRole}"></strong>
+</p>
+
+<hr>
+
+<!-- Switch to Seller -->
+<form th:action="@{/switch-to-seller}" method="post"
+      th:if="${loggedInUser.userRole.name() == 'CUSTOMER'}">
+    <button type="submit">Switch to Seller</button>
+</form>
+
+<!-- Switch to Customer -->
+<form th:action="@{/switch-to-customer}" method="post"
+      th:if="${loggedInUser.userRole.name() == 'SELLER'}">
+    <button type="submit">Switch to Customer</button>
+</form>
+
+<!-- Optional: If user is agent, show info -->
+<div th:if="${loggedInUser.userRole.name() == 'AGENT'}">
+    <p>You are an Agent. Contact admin to switch role.</p>
+</div>
+
+<!-- Optional: If user is admin -->
+<div th:if="${loggedInUser.userRole.name() == 'ADMIN'}">
+    <p>You are an Admin. Role switching does not apply.</p>
+</div>
+
+</body>
+</html>

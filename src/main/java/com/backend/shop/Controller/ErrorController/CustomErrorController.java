@@ -1,4 +1,4 @@
-package com.backend.shop.Controller;
+package com.backend.shop.Controller.ErrorController;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

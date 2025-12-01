@@ -11,45 +11,42 @@ import java.util.List;
 @Service
 public class InMemoryUserService implements UserService {
 
-    // This list works as an in-memory database
     private final List<UserModel> users = new ArrayList<>();
 
     public InMemoryUserService() {
-        // Create a default admin account when the application starts
-        RegisterDTO adminDTO = new RegisterDTO();
-        adminDTO.setUsername("admin");
-        adminDTO.setEmail("admin@shop.com");
-        adminDTO.setPassword("123456");
-
-        // Admin account with ADMIN role
-        registerNewUser(adminDTO, UserRole.ADMIN);
+        // No default admin created here.
     }
 
     @Override
     public UserModel registerNewUser(RegisterDTO registerDTO) {
-        // Default role: CUSTOMER
         return registerNewUser(registerDTO, UserRole.CUSTOMER);
     }
 
     @Override
     public UserModel registerNewUser(RegisterDTO registerDTO, UserRole role) {
 
-        // Check if email already exists
         if (emailExists(registerDTO.getEmail())) {
-            // Email already registered, return null to indicate failure
             return null;
         }
 
+        // Create new user
         UserModel userModel = new UserModel(
                 registerDTO.getUsername(),
                 registerDTO.getEmail(),
                 registerDTO.getPassword()
         );
 
-        // Set the role for the new user
+        userModel.setId(generateUserId());
+
+        // Set role
         userModel.setUserRole(role);
 
+        // Always default seller application status to NONE
+        userModel.setSellerApplicationStatus("NONE");
+
+        // Add to in-memory list
         users.add(userModel);
+
         return userModel;
     }
 
@@ -60,29 +57,55 @@ public class InMemoryUserService implements UserService {
 
     @Override
     public UserModel authenticate(String email, String password) {
-        // Simple authentication: check email and password match
         for (UserModel user : users) {
             if (user.getEmail().equalsIgnoreCase(email)
                     && user.getPassword().equals(password)) {
                 return user;
             }
         }
-        // No matching user found
         return null;
     }
 
     @Override
     public boolean emailExists(String email) {
-        for (UserModel user : users) {
-            if (user.getEmail().equalsIgnoreCase(email)) {
-                return true;
-            }
-        }
-        return false;
+        return findByEmail(email) != null;
     }
 
     @Override
     public boolean isAdmin(UserModel user) {
         return user != null && user.getUserRole() == UserRole.ADMIN;
+    }
+
+    @Override
+    public UserModel changeUserRole(UserModel user, UserRole newRole) {
+        if (user == null) {
+            return null;
+        }
+        user.setUserRole(newRole);
+        return user;
+    }
+
+    @Override
+    public UserModel findByEmail(String email) {
+        for (UserModel user : users) {
+            if (user.getEmail().equalsIgnoreCase(email)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public UserModel findById(Long id) {
+        for (UserModel user : users) {
+            if (user.getId() != null && user.getId().equals(id)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    private Long generateUserId() {
+        return (long) (users.size() + 1);
     }
 }

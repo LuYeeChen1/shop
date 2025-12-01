@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Navbar</title>
+</head>
+<body>
+
+<nav th:fragment="navbar">
+    <div>
+        <a th:href="@{/welcome}">Home</a>
+        <a th:href="@{/customer/dashboard}"
+           th:if="${session.loggedInUser != null and session.loggedInUser.userRole.name() == 'CUSTOMER'}">
+            Customer Dashboard
+        </a>
+        <a th:href="@{/seller/dashboard}"
+           th:if="${session.loggedInUser != null and session.loggedInUser.userRole.name() == 'SELLER'}">
+            Seller Dashboard
+        </a>
+        <a th:href="@{/agent/dashboard}"
+           th:if="${session.loggedInUser != null and session.loggedInUser.userRole.name() == 'AGENT'}">
+            Agent Dashboard
+        </a>
+        <a th:href="@{/admin/dashboard}"
+           th:if="${session.loggedInUser != null and session.loggedInUser.userRole.name() == 'ADMIN'}">
+            Admin Dashboard
+        </a>
+    </div>
+
+    <div style="margin-top: 10px;">
+        <span th:if="${session.loggedInUser != null}">
+            Logged in as:
+            <strong th:text="${session.loggedInUser.username}"></strong>
+            (<span th:text="${session.loggedInUser.userRole}"></span>)
+        </span>
+
+        <span th:if="${session.loggedInUser == null}">
+            You are not logged in.
+            <a th:href="@{/login}">Login</a>
+        </span>
+    </div>
+
+    <div style="margin-top: 10px;">
+
+        <!-- Customer can switch to Seller -->
+        <form th:action="@{/switch-to-seller}" method="post"
+              th:if="${session.loggedInUser != null and session.loggedInUser.userRole.name() == 'CUSTOMER'}">
+            <button type="submit">Switch to Seller</button>
+        </form>
+
+        <!-- Seller can switch to Customer -->
+        <form th:action="@{/switch-to-customer}" method="post"
+              th:if="${session.loggedInUser != null and session.loggedInUser.userRole.name() == 'SELLER'}">
+            <button type="submit">Switch to Customer</button>
+        </form>
+
+        <!-- Optional: show info for Agent -->
+        <div th:if="${session.loggedInUser != null and session.loggedInUser.userRole.name() == 'AGENT'}">
+            <span>You are an Agent. Contact admin to change role.</span>
+        </div>
+
+        <!-- Optional: show info for Admin -->
+        <div th:if="${session.loggedInUser != null and session.loggedInUser.userRole.name() == 'ADMIN'}">
+            <span>You are an Admin.</span>
+        </div>
+    </div>
+
+</nav>
+
+</body>
+</html>

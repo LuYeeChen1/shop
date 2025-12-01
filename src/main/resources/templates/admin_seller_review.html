@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Seller Applications Review</title>
+</head>
+<body>
+
+<h2>Seller Applications (Pending)</h2>
+
+<!-- Flash message -->
+<div th:if="${message}">
+    <p th:text="${message}"></p>
+</div>
+
+<table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+    <tr>
+        <th>Seller ID</th>
+        <th>Customer ID</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="seller : ${pendingSellers}">
+        <td th:text="${seller.id}">1</td>
+        <td th:text="${seller.customerId}">100</td>
+        <td th:text="${seller.status}">PENDING</td>
+        <td>
+            <form th:action="@{/admin/seller/approve/{id}(id=${seller.id})}"
+                  method="post" style="display:inline;">
+                <button type="submit">Approve</button>
+            </form>
+
+            <form th:action="@{/admin/seller/reject/{id}(id=${seller.id})}"
+                  method="post" style="display:inline;">
+                <button type="submit">Reject</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<hr>
+
+<a th:href="@{/admin}">Back to Admin Home</a>
+
+</body>
+</html>

@@ -2,8 +2,11 @@ package com.backend.shop.Controller;
 
 import com.backend.shop.DataTransferObject.RegisterDTO;
 import com.backend.shop.Model.UserModel;
-import com.backend.shop.Service.RegisterService;
+import com.backend.shop.Model.UserRole;
+import com.backend.shop.Service.UserService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,11 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class RegisterController {
 
-    private final RegisterService registerService;
-
-    public RegisterController(RegisterService registerService) {
-        this.registerService = registerService;
-    }
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
@@ -30,23 +30,21 @@ public class RegisterController {
     public String processRegister(
             @Valid @ModelAttribute("registerDTO") RegisterDTO registerDTO,
             BindingResult bindingResult,
-            Model model
+            Model model,
+            HttpSession session
     ) {
         if (bindingResult.hasErrors()) {
             return "register";
         }
 
-        // Delegate registration logic to RegisterService
-        UserModel createdUser = registerService.register(registerDTO);
+        UserModel createdUser = userService.registerNewUser(registerDTO, UserRole.CUSTOMER);
 
         if (createdUser == null) {
-            // Email is already registered (handled by RegisterService)
             model.addAttribute("registerError", "Email is already registered.");
             return "register";
         }
 
-        //createdUsername Showed in register_success.html
-        model.addAttribute("createdUsername", createdUser.getUsername());
+        model.addAttribute("registeredUser", createdUser);
         return "register_success";
     }
 }
