@@ -8,11 +8,8 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -21,11 +18,7 @@ public class AdminSellerReviewController {
     @Autowired
     private SellerRepository sellerRepository;
 
-    /**
-     * Get the currently logged-in user from session.
-     * Session is expected to store an AuthenticatedUser instance
-     * under the attribute name "loggedInUser".
-     */
+    // Helper: get logged-in user from session
     private AuthenticatedUser getLoggedInUser(HttpSession session) {
         Object obj = session.getAttribute("loggedInUser");
         if (obj instanceof AuthenticatedUser) {
@@ -35,68 +28,71 @@ public class AdminSellerReviewController {
     }
 
     /**
-     * Show all pending seller applications to admin.
+     * Show all PENDING seller applications to admin.
      */
     @GetMapping("/admin/seller-applications")
     public String viewSellerApplications(HttpSession session, Model model) {
 
         AuthenticatedUser admin = getLoggedInUser(session);
-        if (admin == null || !"ADMIN".equals(admin.getRole())) {
+        if (admin == null) {
+            return "redirect:/login";
+        }
+        if (!"ADMIN".equals(admin.getRole())) {
             return "access-denied";
         }
 
-        // Load all sellers with PENDING status
-        List<SellerModel> applications =
-                sellerRepository.findByStatus(SellerStatus.PENDING);
-
+        // Only pending applications
+        List<SellerModel> applications = sellerRepository.findByStatus(SellerStatus.PENDING);
         model.addAttribute("applications", applications);
+
         return "admin/admin_seller_review";
     }
 
     /**
-     * Approve a seller application by userId.
+     * Approve a seller application.
      */
     @PostMapping("/admin/seller-approve/{userId}")
-    public String approveSeller(@PathVariable("userId") Long userId,
-                                HttpSession session) {
-
+    public String approveSeller(
+            @PathVariable Long userId,
+            HttpSession session
+    ) {
         AuthenticatedUser admin = getLoggedInUser(session);
-        if (admin == null || !"ADMIN".equals(admin.getRole())) {
+        if (admin == null) {
+            return "redirect:/login";
+        }
+        if (!"ADMIN".equals(admin.getRole())) {
             return "access-denied";
         }
 
-        SellerModel seller = sellerRepository.findByUserId(userId);
-        if (seller != null) {
-            seller.setStatus(SellerStatus.APPROVED);
-            seller.setReviewedAt(LocalDateTime.now());
-            seller.setReviewedByAdmin(admin.getEmail());
-            seller.setReviewComment("Approved by admin");
-            sellerRepository.update(seller);
-        }
+        // Update seller status to APPROVED
+        sellerRepository.updateStatus(userId, SellerStatus.APPROVED, admin.getEmail(), "Approved");
 
         return "redirect:/admin/seller-applications";
     }
 
     /**
-     * Reject a seller application by userId.
+     * Reject a seller application with an optional comment.
      */
     @PostMapping("/admin/seller-reject/{userId}")
-    public String rejectSeller(@PathVariable("userId") Long userId,
-                               HttpSession session) {
-
+    public String rejectSeller(
+            @PathVariable Long userId,
+            @RequestParam(name = "comment", required = false) String comment,
+            HttpSession session
+    ) {
         AuthenticatedUser admin = getLoggedInUser(session);
-        if (admin == null || !"ADMIN".equals(admin.getRole())) {
+        if (admin == null) {
+            return "redirect:/login";
+        }
+        if (!"ADMIN".equals(admin.getRole())) {
             return "access-denied";
         }
 
-        SellerModel seller = sellerRepository.findByUserId(userId);
-        if (seller != null) {
-            seller.setStatus(SellerStatus.REJECTED);
-            seller.setReviewedAt(LocalDateTime.now());
-            seller.setReviewedByAdmin(admin.getEmail());
-            seller.setReviewComment("Rejected by admin");
-            sellerRepository.update(seller);
+        if (comment == null || comment.isBlank()) {
+            comment = "Rejected by admin";
         }
+
+        // Update seller status to REJECTED
+        sellerRepository.updateStatus(userId, SellerStatus.REJECTED, admin.getEmail(), comment);
 
         return "redirect:/admin/seller-applications";
     }

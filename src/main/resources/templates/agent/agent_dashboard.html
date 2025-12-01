@@ -1,21 +1,17 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Agent Dashboard</title>
 </head>
 <body>
 
+<!-- Include top navbar -->
 <div th:replace="fragments/navbar :: navbar"></div>
 
 <h2>Agent Dashboard</h2>
 
-<p>Welcome to the agent dashboard.</p>
-
-<p>
-    Logged in user:
-    <span th:text="${session.loggedInUser != null ? session.loggedInUser.username : 'Guest'}"></span>
-</p>
+<p>Welcome, agent!</p>
 
 </body>
 </html>

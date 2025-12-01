@@ -1,37 +1,34 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>User List</title>
+    <title>All Users</title>
 </head>
 <body>
 
-<h2>Registered Users</h2>
+<!-- Include top navbar -->
+<div th:replace="fragments/navbar :: navbar"></div>
 
-<!-- Show the logged-in username -->
-<div th:if="${loggedInUsername != null}">
-    <p th:text="'Logged in as: ' + ${loggedInUsername}"></p>
-</div>
+<h2>All Users</h2>
 
 <table border="1">
     <thead>
     <tr>
-        <th>Username</th>
+        <th>User ID</th>
         <th>Email</th>
+        <th>Username</th>
+        <th>Role</th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="user : ${users}">
-        <td th:text="${user.username}"></td>
-        <td th:text="${user.email}"></td>
+    <tr th:each="u : ${users}">
+        <td th:text="${u.id}">1</td>
+        <td th:text="${u.email}">email@example.com</td>
+        <td th:text="${u.username}">username</td>
+        <td th:text="${u.role}">CUSTOMER</td>
     </tr>
     </tbody>
 </table>
-
-<p>
-    <a th:href="@{/welcome}">Back to Welcome</a> |
-    <a th:href="@{/logout}">Logout</a>
-</p>
 
 </body>
 </html>

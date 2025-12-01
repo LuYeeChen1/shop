@@ -1,38 +1,19 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Seller Dashboard</title>
 </head>
 <body>
 
+<!-- Include top navbar -->
 <div th:replace="fragments/navbar :: navbar"></div>
 
 <h2>Seller Dashboard</h2>
 
-<p>
-    Logged in as:
-    <strong th:text="${session.loggedInUser.username}"></strong>
-</p>
+<p>Welcome, seller!</p>
 
-<hr>
-
-<p>You are now in Seller mode.</p>
-
-<p>Your seller application has been approved.</p>
-
-<hr>
-
-<h3>Seller Actions (Placeholder)</h3>
-
-<ul>
-    <li>Manage products</li>
-    <li>View orders</li>
-    <li>Update seller profile</li>
-</ul>
-
-<hr>
-
+<!-- Switch role back to customer -->
 <form th:action="@{/switch-to-customer}" method="post">
     <button type="submit">Switch back to Customer</button>
 </form>

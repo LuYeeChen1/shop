@@ -23,7 +23,7 @@ public class CustomerSellerController {
     private SellerRepository sellerRepository;
 
     /**
-     * Get logged-in user from session as AuthenticatedUser.
+     * Helper: get logged-in user as AuthenticatedUser.
      */
     private AuthenticatedUser getLoggedInUser(HttpSession session) {
         Object obj = session.getAttribute("loggedInUser");
@@ -35,7 +35,7 @@ public class CustomerSellerController {
 
     /**
      * Customer applies to become a seller.
-     * Creates or updates a SellerModel with PENDING status.
+     * Inserts or updates seller_table with PENDING status.
      */
     @PostMapping("/customer/apply-seller")
     public String applySeller(HttpSession session) {
@@ -45,7 +45,7 @@ public class CustomerSellerController {
             return "redirect:/login";
         }
 
-        // Only CUSTOMER can apply to become a seller
+        // Only CUSTOMER can apply
         if (!"CUSTOMER".equals(user.getRole())) {
             return "access-denied";
         }
@@ -60,26 +60,30 @@ public class CustomerSellerController {
             seller.setAppliedAt(LocalDateTime.now());
             sellerRepository.save(seller);
         } else {
-            // Re-apply if previously NONE or REJECTED
-            if (seller.getStatus() == null
-                    || seller.getStatus() == SellerStatus.REJECTED) {
+            // Re-apply only if REJECTED or status null
+            if (seller.getStatus() == SellerStatus.REJECTED || seller.getStatus() == null) {
 
                 seller.setStatus(SellerStatus.PENDING);
                 seller.setAppliedAt(LocalDateTime.now());
                 seller.setReviewedAt(null);
                 seller.setReviewedByAdmin(null);
                 seller.setReviewComment(null);
-                sellerRepository.update(seller);
+
+                sellerRepository.updateStatus(
+                        seller.getUserId(),
+                        SellerStatus.PENDING,
+                        null,
+                        null
+                );
             }
-            // If already PENDING or APPROVED, do nothing special
         }
 
         return "redirect:/customer/dashboard";
     }
 
     /**
-     * Customer enters seller mode after being approved.
-     * Changes users.user_role to SELLER and updates session.
+     * Customer enters seller mode if approved.
+     * Updates users.user_role + session role.
      */
     @PostMapping("/customer/enter-seller")
     public String enterSeller(HttpSession session) {
@@ -90,12 +94,14 @@ public class CustomerSellerController {
         }
 
         SellerModel seller = sellerRepository.findByUserId(user.getUserId());
+
+        // Must be approved to enter seller dashboard
         if (seller != null && seller.getStatus() == SellerStatus.APPROVED) {
 
-            // Update role in users table
+            // Update role in DB
             userService.changeUserRole(user.getUserId(), UserRole.SELLER);
 
-            // Update role in session
+            // Update current session
             user.setRole(UserRole.SELLER.name());
             session.setAttribute("loggedInUser", user);
 
