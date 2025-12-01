@@ -17,20 +17,16 @@ public class DashboardController {
         return null;
     }
 
-    private boolean hasRole(UserModel user, UserRole role) {
-        return user != null && user.getUserRole() == role;
-    }
-
     @GetMapping("/customer/dashboard")
     public String customerDashboard(HttpSession session) {
         UserModel user = getLoggedInUser(session);
         if (user == null) {
             return "redirect:/login";
         }
-        if (!hasRole(user, UserRole.CUSTOMER)) {
+        if (user.getUserRole() != UserRole.CUSTOMER) {
             return "access-denied";
         }
-        return "dashboard/customer_dashboard";
+        return "customer/customer_dashboard";
     }
 
     @GetMapping("/seller/dashboard")
@@ -39,10 +35,10 @@ public class DashboardController {
         if (user == null) {
             return "redirect:/login";
         }
-        if (!hasRole(user, UserRole.SELLER)) {
+        if (user.getUserRole() != UserRole.SELLER) {
             return "access-denied";
         }
-        return "dashboard/seller_dashboard";
+        return "seller/seller_dashboard";
     }
 
     @GetMapping("/agent/dashboard")
@@ -51,10 +47,10 @@ public class DashboardController {
         if (user == null) {
             return "redirect:/login";
         }
-        if (!hasRole(user, UserRole.AGENT)) {
+        if (user.getUserRole() != UserRole.AGENT) {
             return "access-denied";
         }
-        return "dashboard/agent_dashboard";
+        return "agent/agent_dashboard";
     }
 
     @GetMapping("/admin/dashboard")
@@ -63,9 +59,9 @@ public class DashboardController {
         if (user == null) {
             return "redirect:/login";
         }
-        if (!hasRole(user, UserRole.ADMIN)) {
+        if (user.getUserRole() != UserRole.ADMIN) {
             return "access-denied";
         }
-        return "dashboard/admin_dashboard";
+        return "admin/admin_dashboard";
     }
 }

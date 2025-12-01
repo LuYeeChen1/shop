@@ -1,4 +1,4 @@
-package com.backend.shop.Controller;
+package com.backend.shop.Controller.AdminController;
 
 import com.backend.shop.Model.UserModel;
 import com.backend.shop.Model.UserRole;
@@ -12,24 +12,27 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
 
 @Controller
-public class AdminUserController {
+public class AdminUserListController {
 
     @Autowired
     private UserService userService;
 
     @GetMapping("/admin/users")
     public String listUsers(HttpSession session, Model model) {
-        UserModel loggedInUser = (UserModel) session.getAttribute("loggedInUser");
-        if (loggedInUser == null) {
+
+        UserModel user = (UserModel) session.getAttribute("loggedInUser");
+
+        if (user == null) {
             return "redirect:/login";
         }
-        if (loggedInUser.getUserRole() != UserRole.ADMIN) {
+
+        if (user.getUserRole() != UserRole.ADMIN) {
             return "access-denied";
         }
 
         List<UserModel> users = userService.getAllUsers();
         model.addAttribute("users", users);
 
-        return "user_list";
+        return "admin/user_list";
     }
 }
