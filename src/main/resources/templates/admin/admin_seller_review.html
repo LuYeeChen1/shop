@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Seller Applications</title>
+</head>
+<body>
+
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<h2>Seller Applications</h2>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>User ID</th>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="user : ${applications}">
+        <td th:text="${user.id}"></td>
+        <td th:text="${user.username}"></td>
+        <td th:text="${user.email}"></td>
+        <td th:text="${user.sellerApplicationStatus}"></td>
+
+        <td>
+            <!-- Approve button -->
+            <form th:action="@{'/admin/seller-approve/' + ${user.id}}" method="post"
+                  th:if="${user.sellerApplicationStatus == 'PENDING'}">
+                <button type="submit">Approve</button>
+            </form>
+
+            <!-- Reject button -->
+            <form th:action="@{'/admin/seller-reject/' + ${user.id}}" method="post"
+                  th:if="${user.sellerApplicationStatus == 'PENDING'}">
+                <button type="submit">Reject</button>
+            </form>
+        </td>
+
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

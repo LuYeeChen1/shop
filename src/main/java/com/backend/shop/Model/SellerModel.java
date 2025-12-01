@@ -1,41 +1,117 @@
 package com.backend.shop.Model;
 
+import java.time.LocalDateTime;
+
 public class SellerModel {
 
-    private String email;       // PK
-    private String username;
-    private String password;
+    private Long userId;
+    private String shopName;
+    private String shopDescription;
+    private String shopLogoUrl;
 
-    public SellerModel() {}
+    private String businessRegistrationNumber;
+    private String businessAddress;
+    private String contactNumber;
 
-    public SellerModel(String email, String username, String password) {
-        this.email = email;
-        this.username = username;
-        this.password = password;
+    private SellerStatus status;
+    private LocalDateTime appliedAt;
+    private LocalDateTime reviewedAt;
+    private String reviewedByAdmin;
+    private String reviewComment;
+
+    public Long getUserId() {
+        return userId;
     }
 
-    // Getters & Setters
-    public String getEmail() {
-        return email;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public String getShopName() {
+        return shopName;
     }
 
-    public String getUsername() {
-        return username;
+    public void setShopName(String shopName) {
+        this.shopName = shopName;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public String getShopDescription() {
+        return shopDescription;
     }
 
-    public String getPassword() {
-        return password;
+    public void setShopDescription(String shopDescription) {
+        this.shopDescription = shopDescription;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public String getShopLogoUrl() {
+        return shopLogoUrl;
+    }
+
+    public void setShopLogoUrl(String shopLogoUrl) {
+        this.shopLogoUrl = shopLogoUrl;
+    }
+
+    public String getBusinessRegistrationNumber() {
+        return businessRegistrationNumber;
+    }
+
+    public void setBusinessRegistrationNumber(String businessRegistrationNumber) {
+        this.businessRegistrationNumber = businessRegistrationNumber;
+    }
+
+    public String getBusinessAddress() {
+        return businessAddress;
+    }
+
+    public void setBusinessAddress(String businessAddress) {
+        this.businessAddress = businessAddress;
+    }
+
+    public String getContactNumber() {
+        return contactNumber;
+    }
+
+    public void setContactNumber(String contactNumber) {
+        this.contactNumber = contactNumber;
+    }
+
+    public SellerStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(SellerStatus status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getAppliedAt() {
+        return appliedAt;
+    }
+
+    public void setAppliedAt(LocalDateTime appliedAt) {
+        this.appliedAt = appliedAt;
+    }
+
+    public LocalDateTime getReviewedAt() {
+        return reviewedAt;
+    }
+
+    public void setReviewedAt(LocalDateTime reviewedAt) {
+        this.reviewedAt = reviewedAt;
+    }
+
+    public String getReviewedByAdmin() {
+        return reviewedByAdmin;
+    }
+
+    public void setReviewedByAdmin(String reviewedByAdmin) {
+        this.reviewedByAdmin = reviewedByAdmin;
+    }
+
+    public String getReviewComment() {
+        return reviewComment;
+    }
+
+    public void setReviewComment(String reviewComment) {
+        this.reviewComment = reviewComment;
     }
 }

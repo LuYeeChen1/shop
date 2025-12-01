@@ -2,40 +2,76 @@ package com.backend.shop.Model;
 
 public class CustomerModel {
 
-    private String email;       // PK
-    private String username;
-    private String password;
+    private Long userId;
+    private String fullName;
+    private String phoneNumber;
+    private String defaultShippingAddress;
+    private String billingAddress;
+    private String preferredLanguage;
+    private String preferredCurrency;
+    private int loyaltyPoints;
 
-    public CustomerModel() {}
-
-    public CustomerModel(String email, String username, String password) {
-        this.email = email;
-        this.username = username;
-        this.password = password;
+    public Long getUserId() {
+        return userId;
     }
 
-    // Getters & Setters
-    public String getEmail() {
-        return email;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public String getFullName() {
+        return fullName;
     }
 
-    public String getUsername() {
-        return username;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public String getPassword() {
-        return password;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public String getDefaultShippingAddress() {
+        return defaultShippingAddress;
+    }
+
+    public void setDefaultShippingAddress(String defaultShippingAddress) {
+        this.defaultShippingAddress = defaultShippingAddress;
+    }
+
+    public String getBillingAddress() {
+        return billingAddress;
+    }
+
+    public void setBillingAddress(String billingAddress) {
+        this.billingAddress = billingAddress;
+    }
+
+    public String getPreferredLanguage() {
+        return preferredLanguage;
+    }
+
+    public void setPreferredLanguage(String preferredLanguage) {
+        this.preferredLanguage = preferredLanguage;
+    }
+
+    public String getPreferredCurrency() {
+        return preferredCurrency;
+    }
+
+    public void setPreferredCurrency(String preferredCurrency) {
+        this.preferredCurrency = preferredCurrency;
+    }
+
+    public int getLoyaltyPoints() {
+        return loyaltyPoints;
+    }
+
+    public void setLoyaltyPoints(int loyaltyPoints) {
+        this.loyaltyPoints = loyaltyPoints;
     }
 }
