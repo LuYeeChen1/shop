@@ -1,8 +1,7 @@
 package com.backend.shop.Controller;
 
 import com.backend.shop.DataTransferObject.LoginDTO;
-import com.backend.shop.Model.UserModel;
-import com.backend.shop.Model.UserRole;
+import com.backend.shop.Model.AuthenticatedUser;
 import com.backend.shop.Service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -37,22 +36,28 @@ public class LoginController {
             return "login";
         }
 
-        UserModel user = userService.authenticate(loginDTO.getEmail(), loginDTO.getPassword());
+        // Authenticate and get a safe session object
+        AuthenticatedUser authUser =
+                userService.authenticate(loginDTO.getEmail(), loginDTO.getPassword());
 
-        if (user == null) {
+        if (authUser == null) {
             model.addAttribute("loginError", "Invalid email or password");
             return "login";
         }
 
-        session.setAttribute("loggedInUser", user);
+        // Store only AuthenticatedUser in session
+        session.setAttribute("loggedInUser", authUser);
 
-        if (user.getUserRole() == UserRole.ADMIN) {
+        // Redirect based on role
+        String role = authUser.getRole();
+        if ("ADMIN".equals(role)) {
             return "redirect:/admin/dashboard";
-        } else if (user.getUserRole() == UserRole.AGENT) {
+        } else if ("AGENT".equals(role)) {
             return "redirect:/agent/dashboard";
-        } else if (user.getUserRole() == UserRole.SELLER) {
+        } else if ("SELLER".equals(role)) {
             return "redirect:/seller/dashboard";
         } else {
+            // Default: CUSTOMER or any other role
             return "redirect:/customer/dashboard";
         }
     }

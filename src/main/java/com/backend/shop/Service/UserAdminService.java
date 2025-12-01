@@ -1,6 +1,7 @@
 package com.backend.shop.Service;
 
 import com.backend.shop.Model.AuthenticatedUser;
+import com.backend.shop.Model.UserModel;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,16 +37,16 @@ public class UserAdminService {
      * @return true if user has ADMIN role, otherwise false
      */
     public boolean canViewUserList(AuthenticatedUser user) {
-        return userService.isAdmin(user);
+        return user != null && "ADMIN".equals(user.getRole());
     }
 
     /**
-     * Get a summary list of all users from all role tables.
-     * This is intended for ADMIN views (e.g. /users page).
+     * Get a list of all users from the users table.
+     * This is intended for ADMIN views (e.g. /admin/users page).
      *
-     * @return list of AuthenticatedUser representing all users
+     * @return list of UserModel representing all users
      */
-    public List<AuthenticatedUser> getAllUsersForAdmin() {
-        return userService.getAllUsersSummary();
+    public List<UserModel> getAllUsersForAdmin() {
+        return userService.getAllUsers();
     }
 }

@@ -1,4 +1,4 @@
-package com.backend.shop.Model;
+package com.backend.shop.Model.Seller;
 
 public enum SellerStatus {
     PENDING,

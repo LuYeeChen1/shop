@@ -1,8 +1,8 @@
 package com.backend.shop.Service;
 
 import com.backend.shop.DataTransferObject.RegisterDTO;
-import com.backend.shop.Model.CustomerModel;
-import com.backend.shop.Model.SellerModel;
+import com.backend.shop.Model.UserModel;
+import com.backend.shop.Model.UserRole;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,10 +24,14 @@ public class RegisterService {
      * ADMIN registration is not allowed from the public side.
      *
      * @param registerDTO the form data submitted by the user
-     * @param role        CUSTOMER or SELLER
-     * @return the created user model, or null if registration failed
+     * @param role        expected to be CUSTOMER or SELLER
+     * @return the created base user model (from users table), or null if registration failed
      */
-    public Object register(RegisterDTO registerDTO, String role) {
+    public UserModel register(RegisterDTO registerDTO, String role) {
+
+        if (role == null) {
+            return null;
+        }
 
         // Normalize role to uppercase
         role = role.toUpperCase();
@@ -37,17 +41,23 @@ public class RegisterService {
             return null; // reject admin registration
         }
 
-        // Let UserService handle email checks & password hashing
+        // Map string role to UserRole enum
+        UserRole userRole;
         switch (role) {
-
             case "SELLER":
-                SellerModel seller = userService.registerSeller(registerDTO);
-                return seller; // could be null if failed
-
+                userRole = UserRole.SELLER;
+                break;
             case "CUSTOMER":
             default:
-                CustomerModel customer = userService.registerCustomer(registerDTO);
-                return customer;
+                userRole = UserRole.CUSTOMER;
+                break;
         }
+
+        // Delegate to UserService:
+        //  - check if email exists in users table
+        //  - hash password
+        //  - insert into users table with given role
+        //  - return created UserModel or null if failed
+        return userService.registerNewUser(registerDTO, userRole);
     }
 }

@@ -1,8 +1,9 @@
 package com.backend.shop.Controller.AdminController;
 
-import com.backend.shop.Model.UserModel;
-import com.backend.shop.Model.UserRole;
-import com.backend.shop.Service.UserService;
+import com.backend.shop.Model.AuthenticatedUser;
+import com.backend.shop.Model.Seller.SellerModel;
+import com.backend.shop.Model.Seller.SellerStatus;
+import com.backend.shop.Repository.SellerRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,66 +12,90 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class AdminSellerReviewController {
 
     @Autowired
-    private UserService userService;
+    private SellerRepository sellerRepository;
 
-    private UserModel getLoggedInUser(HttpSession session) {
+    /**
+     * Get the currently logged-in user from session.
+     * Session is expected to store an AuthenticatedUser instance
+     * under the attribute name "loggedInUser".
+     */
+    private AuthenticatedUser getLoggedInUser(HttpSession session) {
         Object obj = session.getAttribute("loggedInUser");
-        if (obj instanceof UserModel) {
-            return (UserModel) obj;
+        if (obj instanceof AuthenticatedUser) {
+            return (AuthenticatedUser) obj;
         }
         return null;
     }
 
+    /**
+     * Show all pending seller applications to admin.
+     */
     @GetMapping("/admin/seller-applications")
     public String viewSellerApplications(HttpSession session, Model model) {
 
-        UserModel admin = getLoggedInUser(session);
-        if (admin == null || admin.getUserRole() != UserRole.ADMIN) {
+        AuthenticatedUser admin = getLoggedInUser(session);
+        if (admin == null || !"ADMIN".equals(admin.getRole())) {
             return "access-denied";
         }
 
-        List<UserModel> applications = userService.getAllUsers().stream()
-                .filter(u -> !"NONE".equals(u.getSellerApplicationStatus()))
-                .collect(Collectors.toList());
+        // Load all sellers with PENDING status
+        List<SellerModel> applications =
+                sellerRepository.findByStatus(SellerStatus.PENDING);
 
         model.addAttribute("applications", applications);
         return "admin/admin_seller_review";
     }
 
-    @PostMapping("/admin/seller-approve/{id}")
-    public String approveSeller(@PathVariable Long id, HttpSession session) {
+    /**
+     * Approve a seller application by userId.
+     */
+    @PostMapping("/admin/seller-approve/{userId}")
+    public String approveSeller(@PathVariable("userId") Long userId,
+                                HttpSession session) {
 
-        UserModel admin = getLoggedInUser(session);
-        if (admin == null || admin.getUserRole() != UserRole.ADMIN) {
+        AuthenticatedUser admin = getLoggedInUser(session);
+        if (admin == null || !"ADMIN".equals(admin.getRole())) {
             return "access-denied";
         }
 
-        UserModel user = userService.findById(id);
-        if (user != null) {
-            user.setSellerApplicationStatus("APPROVED");
+        SellerModel seller = sellerRepository.findByUserId(userId);
+        if (seller != null) {
+            seller.setStatus(SellerStatus.APPROVED);
+            seller.setReviewedAt(LocalDateTime.now());
+            seller.setReviewedByAdmin(admin.getEmail());
+            seller.setReviewComment("Approved by admin");
+            sellerRepository.update(seller);
         }
 
         return "redirect:/admin/seller-applications";
     }
 
-    @PostMapping("/admin/seller-reject/{id}")
-    public String rejectSeller(@PathVariable Long id, HttpSession session) {
+    /**
+     * Reject a seller application by userId.
+     */
+    @PostMapping("/admin/seller-reject/{userId}")
+    public String rejectSeller(@PathVariable("userId") Long userId,
+                               HttpSession session) {
 
-        UserModel admin = getLoggedInUser(session);
-        if (admin == null || admin.getUserRole() != UserRole.ADMIN) {
+        AuthenticatedUser admin = getLoggedInUser(session);
+        if (admin == null || !"ADMIN".equals(admin.getRole())) {
             return "access-denied";
         }
 
-        UserModel user = userService.findById(id);
-        if (user != null) {
-            user.setSellerApplicationStatus("REJECTED");
+        SellerModel seller = sellerRepository.findByUserId(userId);
+        if (seller != null) {
+            seller.setStatus(SellerStatus.REJECTED);
+            seller.setReviewedAt(LocalDateTime.now());
+            seller.setReviewedByAdmin(admin.getEmail());
+            seller.setReviewComment("Rejected by admin");
+            sellerRepository.update(seller);
         }
 
         return "redirect:/admin/seller-applications";

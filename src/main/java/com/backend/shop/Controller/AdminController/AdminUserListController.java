@@ -1,7 +1,7 @@
 package com.backend.shop.Controller.AdminController;
 
+import com.backend.shop.Model.AuthenticatedUser;
 import com.backend.shop.Model.UserModel;
-import com.backend.shop.Model.UserRole;
 import com.backend.shop.Service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,16 +20,19 @@ public class AdminUserListController {
     @GetMapping("/admin/users")
     public String listUsers(HttpSession session, Model model) {
 
-        UserModel user = (UserModel) session.getAttribute("loggedInUser");
+        // Get logged-in user from session
+        AuthenticatedUser logged = (AuthenticatedUser) session.getAttribute("loggedInUser");
 
-        if (user == null) {
+        if (logged == null) {
             return "redirect:/login";
         }
 
-        if (user.getUserRole() != UserRole.ADMIN) {
+        // Ensure only ADMIN can access
+        if (!"ADMIN".equals(logged.getRole())) {
             return "access-denied";
         }
 
+        // Load all base users from users table
         List<UserModel> users = userService.getAllUsers();
         model.addAttribute("users", users);
 

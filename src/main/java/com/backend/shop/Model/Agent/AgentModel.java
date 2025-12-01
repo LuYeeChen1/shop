@@ -1,4 +1,4 @@
-package com.backend.shop.Model;
+package com.backend.shop.Model.Agent;
 
 import java.util.List;
 

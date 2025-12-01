@@ -1,147 +1,129 @@
 package com.backend.shop.Service;
 
 import com.backend.shop.DataTransferObject.RegisterDTO;
-import com.backend.shop.Model.AdminModel;
-import com.backend.shop.Model.CustomerModel;
-import com.backend.shop.Model.SellerModel;
 import com.backend.shop.Model.AuthenticatedUser;
-import com.backend.shop.Repository.AdminRepository;
-import com.backend.shop.Repository.CustomerRepository;
-import com.backend.shop.Repository.SellerRepository;
+import com.backend.shop.Model.UserModel;
+import com.backend.shop.Model.UserRole;
+import com.backend.shop.Repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final AdminRepository adminRepository;
-    private final CustomerRepository customerRepository;
-    private final SellerRepository sellerRepository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(AdminRepository adminRepository,
-                           CustomerRepository customerRepository,
-                           SellerRepository sellerRepository,
+    public UserServiceImpl(UserRepository userRepository,
                            PasswordEncoder passwordEncoder) {
-        this.adminRepository = adminRepository;
-        this.customerRepository = customerRepository;
-        this.sellerRepository = sellerRepository;
+        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-    // ===== Register methods =====
+    // ============================================================
+    // REGISTER
+    // ============================================================
 
     @Override
     @Transactional
-    public AdminModel registerAdmin(RegisterDTO registerDTO) {
-
-        // Email must be unique across all role tables
-        if (emailExists(registerDTO.getEmail())) {
-            return null;
-        }
-
-        AdminModel admin = new AdminModel();
-        admin.setEmail(registerDTO.getEmail());
-        admin.setUsername(registerDTO.getUsername());
-        admin.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
-
-        adminRepository.save(admin);
-        return admin;
+    public UserModel registerNewUser(RegisterDTO registerDTO) {
+        return registerNewUser(registerDTO, UserRole.CUSTOMER);
     }
 
     @Override
     @Transactional
-    public CustomerModel registerCustomer(RegisterDTO registerDTO) {
+    public UserModel registerNewUser(RegisterDTO registerDTO, UserRole role) {
 
+        // Check email uniqueness
         if (emailExists(registerDTO.getEmail())) {
             return null;
         }
 
-        CustomerModel customer = new CustomerModel();
-        customer.setEmail(registerDTO.getEmail());
-        customer.setUsername(registerDTO.getUsername());
-        customer.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
+        // Hash password
+        String encodedPassword = passwordEncoder.encode(registerDTO.getPassword());
 
-        customerRepository.save(customer);
-        return customer;
+        // Create user in users table
+        Long userId = userRepository.createUser(
+                registerDTO.getEmail(),
+                encodedPassword,
+                registerDTO.getUsername(),
+                role.name()
+        );
+
+        // Return created user
+        return userRepository.findById(userId);
     }
 
-    @Override
-    @Transactional
-    public SellerModel registerSeller(RegisterDTO registerDTO) {
-
-        if (emailExists(registerDTO.getEmail())) {
-            return null;
-        }
-
-        SellerModel seller = new SellerModel();
-        seller.setEmail(registerDTO.getEmail());
-        seller.setUsername(registerDTO.getUsername());
-        seller.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
-
-        sellerRepository.save(seller);
-        return seller;
-    }
-
-    // ===== Login / Authenticate =====
+    // ============================================================
+    // AUTHENTICATION (ENTERPRISE-LEVEL)
+    // ============================================================
 
     @Override
     public AuthenticatedUser authenticate(String email, String rawPassword) {
 
-        // 1) Try admin table
-        AdminModel admin = adminRepository.findByEmail(email);
-        if (admin != null && passwordEncoder.matches(rawPassword, admin.getPassword())) {
-            return new AuthenticatedUser(admin.getEmail(), admin.getUsername(), "ADMIN");
+        UserModel user = userRepository.findByEmail(email);
+        if (user == null) {
+            return null;
         }
 
-        // 2) Try customer table
-        CustomerModel customer = customerRepository.findByEmail(email);
-        if (customer != null && passwordEncoder.matches(rawPassword, customer.getPassword())) {
-            return new AuthenticatedUser(customer.getEmail(), customer.getUsername(), "CUSTOMER");
+        boolean passwordMatch = passwordEncoder.matches(rawPassword, user.getPassword());
+        if (!passwordMatch) {
+            return null;
         }
 
-        // 3) Try seller table
-        SellerModel seller = sellerRepository.findByEmail(email);
-        if (seller != null && passwordEncoder.matches(rawPassword, seller.getPassword())) {
-            return new AuthenticatedUser(seller.getEmail(), seller.getUsername(), "SELLER");
-        }
-
-        // No match in any table
-        return null;
+        // Return safe object for session
+        return new AuthenticatedUser(
+                user.getId(),
+                user.getEmail(),
+                user.getUsername(),
+                user.getRole().name()
+        );
     }
 
-    // ===== Utility methods =====
+    // ============================================================
+    // UTILITIES
+    // ============================================================
 
     @Override
     public boolean emailExists(String email) {
-        return adminRepository.exists(email)
-                || customerRepository.exists(email)
-                || sellerRepository.exists(email);
+        return userRepository.emailExists(email);
     }
 
     @Override
-    public List<AuthenticatedUser> getAllUsersSummary() {
-        List<AuthenticatedUser> list = new ArrayList<>();
-
-        adminRepository.findAll().forEach(a ->
-                list.add(new AuthenticatedUser(a.getEmail(), a.getUsername(), "ADMIN"))
-        );
-        customerRepository.findAll().forEach(c ->
-                list.add(new AuthenticatedUser(c.getEmail(), c.getUsername(), "CUSTOMER"))
-        );
-        sellerRepository.findAll().forEach(s ->
-                list.add(new AuthenticatedUser(s.getEmail(), s.getUsername(), "SELLER"))
-        );
-
-        return list;
+    public boolean isAdmin(UserModel user) {
+        return user != null && user.getRole() == UserRole.ADMIN;
     }
 
     @Override
-    public boolean isAdmin(AuthenticatedUser user) {
-        return user != null && "ADMIN".equals(user.getRole());
+    @Transactional
+    public UserModel changeUserRole(Long userId, UserRole newRole) {
+
+        UserModel existing = userRepository.findById(userId);
+        if (existing == null) {
+            return null;
+        }
+
+        userRepository.updateUserRole(userId, newRole.name());
+        existing.setRole(newRole);
+
+        return existing;
+    }
+
+    @Override
+    public UserModel findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public UserModel findById(Long userId) {
+        return userRepository.findById(userId);
+    }
+
+    @Override
+    public List<UserModel> getAllUsers() {
+        return userRepository.findAll();
     }
 }

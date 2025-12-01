@@ -2,22 +2,21 @@ package com.backend.shop.Model;
 
 public class UserModel {
 
-    private Long id;
-    private String username;
-    private String email;
-    private String password;
-    private UserRole userRole;
-    private String sellerApplicationStatus; // NONE, PENDING, APPROVED, REJECTED
+    private Long id;          // maps to users.user_id
+    private String email;     // maps to users.email
+    private String username;  // maps to users.username
+    private String password;  // maps to users.password (hashed)
+    private UserRole role;    // maps to users.user_role
 
     public UserModel() {
     }
 
-    public UserModel(String username, String email, String password) {
-        this.username = username;
+    public UserModel(Long id, String email, String username, String password, UserRole role) {
+        this.id = id;
         this.email = email;
+        this.username = username;
         this.password = password;
-        this.userRole = UserRole.CUSTOMER; // Default role
-        this.sellerApplicationStatus = "NONE"; // Default application status
+        this.role = role;
     }
 
     public Long getId() {
@@ -28,14 +27,6 @@ public class UserModel {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -44,27 +35,34 @@ public class UserModel {
         this.email = email;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    /**
+     * This stores the hashed password (not plain text).
+     */
     public String getPassword() {
         return password;
     }
 
+    /**
+     * Always set the hashed password here.
+     * Do not store raw passwords in this field.
+     */
     public void setPassword(String password) {
         this.password = password;
     }
 
-    public UserRole getUserRole() {
-        return userRole;
+    public UserRole getRole() {
+        return role;
     }
 
-    public void setUserRole(UserRole userRole) {
-        this.userRole = userRole;
-    }
-
-    public String getSellerApplicationStatus() {
-        return sellerApplicationStatus;
-    }
-
-    public void setSellerApplicationStatus(String sellerApplicationStatus) {
-        this.sellerApplicationStatus = sellerApplicationStatus;
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 }
