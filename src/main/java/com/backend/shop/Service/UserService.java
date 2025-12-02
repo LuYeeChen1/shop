@@ -1,7 +1,7 @@
 package com.backend.shop.Service;
 
 import com.backend.shop.DataTransferObject.RegisterDTO;
-import com.backend.shop.Model.AuthenticatedUser;
+import com.backend.shop.Model.Session.AuthenticatedUser;
 import com.backend.shop.Model.UserModel;
 import com.backend.shop.Model.UserRole;
 

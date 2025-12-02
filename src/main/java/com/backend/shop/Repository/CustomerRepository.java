@@ -19,7 +19,7 @@ public class CustomerRepository {
 
     /**
      * Row mapper for CustomerModel.
-     * Converts a database row into a CustomerModel object.
+     * Maps a database row into a CustomerModel object.
      */
     private CustomerModel mapRowToCustomer(ResultSet rs, int rowNum) throws SQLException {
         CustomerModel customer = new CustomerModel();
@@ -31,17 +31,21 @@ public class CustomerRepository {
         customer.setPreferredLanguage(rs.getString("preferred_language"));
         customer.setPreferredCurrency(rs.getString("preferred_currency"));
         customer.setLoyaltyPoints(rs.getInt("loyalty_points"));
+        customer.setCreatedAt(rs.getTimestamp("created_at") != null ? rs.getTimestamp("created_at").toLocalDateTime() : null);
+        customer.setUpdatedAt(rs.getTimestamp("updated_at") != null ? rs.getTimestamp("updated_at").toLocalDateTime() : null);
         return customer;
     }
 
     /**
-     * Insert a new customer.
+     * Insert a new customer entry.
+     * created_at is inserted manually, updated_at is set to NULL (or auto-update in table).
      */
     public void save(CustomerModel customer) {
-        String sql = "INSERT INTO customer_table (" +
+        String sql = "INSERT INTO customers (" +
                 "user_id, full_name, phone_number, default_shipping_address, " +
-                "billing_address, preferred_language, preferred_currency, loyalty_points" +
-                ") VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                "billing_address, preferred_language, preferred_currency, loyalty_points, " +
+                "created_at, updated_at" +
+                ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NULL)";
 
         jdbcTemplate.update(sql,
                 customer.getUserId(),
@@ -56,17 +60,19 @@ public class CustomerRepository {
     }
 
     /**
-     * Update an existing customer by user_id.
+     * Update customer data.
+     * updated_at is automatically updated using NOW().
      */
     public void update(CustomerModel customer) {
-        String sql = "UPDATE customer_table SET " +
+        String sql = "UPDATE customers SET " +
                 "full_name = ?, " +
                 "phone_number = ?, " +
                 "default_shipping_address = ?, " +
                 "billing_address = ?, " +
                 "preferred_language = ?, " +
                 "preferred_currency = ?, " +
-                "loyalty_points = ? " +
+                "loyalty_points = ?, " +
+                "updated_at = NOW() " +
                 "WHERE user_id = ?";
 
         jdbcTemplate.update(sql,
@@ -85,7 +91,7 @@ public class CustomerRepository {
      * Find customer by user_id.
      */
     public CustomerModel findByUserId(Long userId) {
-        String sql = "SELECT * FROM customer_table WHERE user_id = ?";
+        String sql = "SELECT * FROM customers WHERE user_id = ?";
 
         List<CustomerModel> list = jdbcTemplate.query(sql, this::mapRowToCustomer, userId);
         return list.isEmpty() ? null : list.get(0);
@@ -95,17 +101,17 @@ public class CustomerRepository {
      * Find customer by phone number.
      */
     public CustomerModel findByPhoneNumber(String phoneNumber) {
-        String sql = "SELECT * FROM customer_table WHERE phone_number = ?";
+        String sql = "SELECT * FROM customers WHERE phone_number = ?";
 
         List<CustomerModel> list = jdbcTemplate.query(sql, this::mapRowToCustomer, phoneNumber);
         return list.isEmpty() ? null : list.get(0);
     }
 
     /**
-     * Check whether customer exists by user_id.
+     * Check if customer exists by user_id.
      */
     public boolean existsByUserId(Long userId) {
-        String sql = "SELECT COUNT(*) FROM customer_table WHERE user_id = ?";
+        String sql = "SELECT COUNT(*) FROM customers WHERE user_id = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, userId);
         return count != null && count > 0;
     }
@@ -114,15 +120,15 @@ public class CustomerRepository {
      * Get all customers.
      */
     public List<CustomerModel> findAll() {
-        String sql = "SELECT * FROM customer_table";
+        String sql = "SELECT * FROM customers";
         return jdbcTemplate.query(sql, this::mapRowToCustomer);
     }
 
     /**
-     * Delete customer by user_id.
+     * Delete a customer by user_id.
      */
     public void deleteByUserId(Long userId) {
-        String sql = "DELETE FROM customer_table WHERE user_id = ?";
+        String sql = "DELETE FROM customers WHERE user_id = ?";
         jdbcTemplate.update(sql, userId);
     }
 }

@@ -1,7 +1,7 @@
 package com.backend.shop.Service;
 
 import com.backend.shop.DataTransferObject.RegisterDTO;
-import com.backend.shop.Model.AuthenticatedUser;
+import com.backend.shop.Model.Session.AuthenticatedUser;
 import com.backend.shop.Model.UserModel;
 import com.backend.shop.Model.UserRole;
 import com.backend.shop.Repository.UserRepository;
@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
                 registerDTO.getEmail(),
                 encodedPassword,
                 registerDTO.getUsername(),
-                role.name()
+                role        // Change to UserRole, Not String
         );
 
         // Return created user
@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
     }
 
     // ============================================================
-    // AUTHENTICATION (ENTERPRISE-LEVEL)
+    // AUTHENTICATION
     // ============================================================
 
     @Override
@@ -106,7 +106,7 @@ public class UserServiceImpl implements UserService {
             return null;
         }
 
-        userRepository.updateUserRole(userId, newRole.name());
+        userRepository.updateUserRole(userId, newRole);
         existing.setRole(newRole);
 
         return existing;

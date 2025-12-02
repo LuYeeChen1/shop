@@ -1,6 +1,6 @@
 package com.backend.shop.Controller.AdminController;
 
-import com.backend.shop.Model.AuthenticatedUser;
+import com.backend.shop.Model.Session.AuthenticatedUser;
 import com.backend.shop.Model.Seller.SellerModel;
 import com.backend.shop.Model.Seller.SellerStatus;
 import com.backend.shop.Repository.SellerRepository;

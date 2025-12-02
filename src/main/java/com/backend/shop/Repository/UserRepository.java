@@ -28,7 +28,13 @@ public class UserRepository {
         user.setEmail(rs.getString("email"));
         user.setUsername(rs.getString("username"));
         user.setPassword(rs.getString("password"));
-        user.setRole(UserRole.valueOf(rs.getString("user_role")));
+
+        // user_role -> enum
+        String roleStr = rs.getString("user_role");
+        if (roleStr != null) {
+            user.setRole(UserRole.valueOf(roleStr));
+        }
+
         return user;
     }
 
@@ -40,19 +46,18 @@ public class UserRepository {
      * Insert a new user into users table.
      * Returns the generated user_id (PK).
      */
-    public Long createUser(String email, String password, String username, String role) {
+    public Long createUser(String email, String password, String username, UserRole role) {
 
-        String sql = "INSERT INTO users (email, password, username, user_role) VALUES (?, ?, ?, ?)";
+        String sql = """
+            INSERT INTO users (email, password, username, user_role, created_at)
+            VALUES (?, ?, ?, ?, NOW())
+        """;
 
-        // Insert & retrieve generated key
-        jdbcTemplate.update(sql, email, password, username, role);
+        jdbcTemplate.update(sql, email, password, username, role.name());
 
-        // Fetch the generated user_id
-        return jdbcTemplate.queryForObject(
-                "SELECT user_id FROM users WHERE email = ?",
-                Long.class,
-                email
-        );
+        // Retrieve generated user_id
+        String fetchIdSql = "SELECT user_id FROM users WHERE email = ?";
+        return jdbcTemplate.queryForObject(fetchIdSql, Long.class, email);
     }
 
     // ============================================================
@@ -69,7 +74,7 @@ public class UserRepository {
     }
 
     // ============================================================
-    // FIND PASSWORD ONLY (OPTIONAL SUPPORT)
+    // FIND PASSWORD ONLY
     // ============================================================
 
     public String findPasswordByEmail(String email) {
@@ -82,7 +87,7 @@ public class UserRepository {
     }
 
     // ============================================================
-    // FIND USERNAME ONLY (OPTIONAL)
+    // FIND USERNAME ONLY
     // ============================================================
 
     public String findUsernameByEmail(String email) {
@@ -130,8 +135,13 @@ public class UserRepository {
     // UPDATE USER ROLE
     // ============================================================
 
-    public void updateUserRole(Long userId, String newRole) {
-        String sql = "UPDATE users SET user_role = ? WHERE user_id = ?";
-        jdbcTemplate.update(sql, newRole, userId);
+    public void updateUserRole(Long userId, UserRole newRole) {
+        String sql = """
+            UPDATE users
+            SET user_role = ?, updated_at = NOW()
+            WHERE user_id = ?
+        """;
+
+        jdbcTemplate.update(sql, newRole.name(), userId);
     }
 }

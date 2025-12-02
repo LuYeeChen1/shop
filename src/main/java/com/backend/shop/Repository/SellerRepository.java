@@ -5,6 +5,9 @@ import com.backend.shop.Model.Seller.SellerStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 
 @Repository
@@ -16,7 +19,11 @@ public class SellerRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    private SellerModel mapRow(java.sql.ResultSet rs, int rowNum) throws java.sql.SQLException {
+    /**
+     * Row mapper for SellerModel.
+     * Converts a database row into a SellerModel object.
+     */
+    private SellerModel mapRowToSeller(ResultSet rs, int rowNum) throws SQLException {
         SellerModel s = new SellerModel();
 
         s.setUserId(rs.getLong("user_id"));
@@ -31,15 +38,24 @@ public class SellerRepository {
         // Convert VARCHAR → Enum
         String statusStr = rs.getString("status");
         if (statusStr != null) {
-            s.setStatus(SellerStatus.valueOf(statusStr));
+            try {
+                s.setStatus(SellerStatus.valueOf(statusStr));
+            } catch (IllegalArgumentException ex) {
+                // If database has invalid status value, keep it null
+                s.setStatus(null);
+            }
         }
 
-        // timestamps
-        java.sql.Timestamp appliedAt = rs.getTimestamp("applied_at");
-        if (appliedAt != null) s.setAppliedAt(appliedAt.toLocalDateTime());
+        // Map LocalDateTime fields
+        Timestamp appliedAt = rs.getTimestamp("applied_at");
+        if (appliedAt != null) {
+            s.setAppliedAt(appliedAt.toLocalDateTime());
+        }
 
-        java.sql.Timestamp reviewedAt = rs.getTimestamp("reviewed_at");
-        if (reviewedAt != null) s.setReviewedAt(reviewedAt.toLocalDateTime());
+        Timestamp reviewedAt = rs.getTimestamp("reviewed_at");
+        if (reviewedAt != null) {
+            s.setReviewedAt(reviewedAt.toLocalDateTime());
+        }
 
         s.setReviewedByAdmin(rs.getString("reviewed_by_admin"));
         s.setReviewComment(rs.getString("review_comment"));
@@ -47,14 +63,23 @@ public class SellerRepository {
         return s;
     }
 
-    // Save base seller info
+    /**
+     * Insert a new seller application.
+     */
     public void save(SellerModel seller) {
         String sql = """
-            INSERT INTO seller_table 
-            (user_id, shop_name, shop_description, shop_logo_url, business_reg_no, 
-             business_address, contact_number, status, applied_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """;
+            INSERT INTO seller_table (
+                user_id,
+                shop_name,
+                shop_description,
+                shop_logo_url,
+                business_reg_no,
+                business_address,
+                contact_number,
+                status,
+                applied_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """;
 
         jdbcTemplate.update(sql,
                 seller.getUserId(),
@@ -65,40 +90,108 @@ public class SellerRepository {
                 seller.getBusinessAddress(),
                 seller.getContactNumber(),
                 seller.getStatus() != null ? seller.getStatus().name() : null,
-                seller.getAppliedAt()
+                seller.getAppliedAt()      // You can set this to LocalDateTime.now() before saving
         );
     }
 
-    // Find by user ID
+    /**
+     * Update seller basic profile fields (shop and business info).
+     */
+    public void updateProfile(SellerModel seller) {
+        String sql = """
+            UPDATE seller_table SET
+                shop_name = ?,
+                shop_description = ?,
+                shop_logo_url = ?,
+                business_reg_no = ?,
+                business_address = ?,
+                contact_number = ?
+            WHERE user_id = ?
+            """;
+
+        jdbcTemplate.update(sql,
+                seller.getShopName(),
+                seller.getShopDescription(),
+                seller.getShopLogoUrl(),
+                seller.getBusinessRegistrationNumber(),
+                seller.getBusinessAddress(),
+                seller.getContactNumber(),
+                seller.getUserId()
+        );
+    }
+
+    /**
+     * Find seller by user ID.
+     */
     public SellerModel findByUserId(Long userId) {
         String sql = "SELECT * FROM seller_table WHERE user_id = ?";
-        List<SellerModel> list = jdbcTemplate.query(sql, this::mapRow, userId);
+
+        List<SellerModel> list = jdbcTemplate.query(sql, this::mapRowToSeller, userId);
         return list.isEmpty() ? null : list.get(0);
     }
 
-    // Admin: find all seller applications by enum status
-    public List<SellerModel> findByStatus(SellerStatus status) {
-        String sql = "SELECT * FROM seller_table WHERE status = ?";
-        return jdbcTemplate.query(sql, this::mapRow, status.name());
+    /**
+     * Check if a seller record exists for the given user.
+     */
+    public boolean existsByUserId(Long userId) {
+        String sql = "SELECT COUNT(*) FROM seller_table WHERE user_id = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, userId);
+        return count != null && count > 0;
     }
 
-    // Admin: update seller application status
+    /**
+     * Find all sellers with the given status.
+     * Useful for admin to list PENDING / APPROVED / REJECTED.
+     */
+    public List<SellerModel> findByStatus(SellerStatus status) {
+        String sql = "SELECT * FROM seller_table WHERE status = ?";
+        return jdbcTemplate.query(sql, this::mapRowToSeller, status.name());
+    }
+
+    /**
+     * Get all sellers.
+     */
+    public List<SellerModel> findAll() {
+        String sql = "SELECT * FROM seller_table";
+        return jdbcTemplate.query(sql, this::mapRowToSeller);
+    }
+
+    /**
+     * Update seller application status.
+     * Admin sets new status, admin email and comment.
+     */
     public void updateStatus(Long userId, SellerStatus newStatus, String adminEmail, String comment) {
         String sql = """
             UPDATE seller_table SET 
-            status = ?, 
-            reviewed_by_admin = ?, 
-            review_comment = ?, 
-            reviewed_at = NOW()
+                status = ?, 
+                reviewed_by_admin = ?, 
+                review_comment = ?, 
+                reviewed_at = NOW()
             WHERE user_id = ?
-        """;
-        jdbcTemplate.update(sql, newStatus.name(), adminEmail, comment, userId);
+            """;
+
+        jdbcTemplate.update(sql,
+                newStatus != null ? newStatus.name() : null,
+                adminEmail,
+                comment,
+                userId
+        );
     }
 
-    // Count pending applications
+    /**
+     * Count how many applications are still PENDING.
+     */
     public int countPending() {
         String sql = "SELECT COUNT(*) FROM seller_table WHERE status = 'PENDING'";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
         return count == null ? 0 : count;
+    }
+
+    /**
+     * Delete seller record by user_id.
+     */
+    public void deleteByUserId(Long userId) {
+        String sql = "DELETE FROM seller_table WHERE user_id = ?";
+        jdbcTemplate.update(sql, userId);
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -63,6 +64,16 @@ public class AgentRepository {
         agent.setSpecialties(jsonToSpecialties(rs.getString("specialties")));
 
         agent.setAvailable(rs.getBoolean("available"));
+
+        Object createdAtObj = rs.getObject("created_at");
+        if (createdAtObj != null) {
+            agent.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+        }
+        Object updatedAtObj = rs.getObject("updated_at");
+        if (updatedAtObj != null) {
+            agent.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
+        }
+
         return agent;
     }
 
@@ -70,7 +81,7 @@ public class AgentRepository {
      * Insert new agent.
      */
     public void save(AgentModel agent) {
-        String sql = "INSERT INTO agent_table (" +
+        String sql = "INSERT INTO agents (" +
                 "user_id, full_name, contact_email, contact_number, " +
                 "employee_id, department, shift, online, active_tickets, specialties, available" +
                 ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -94,7 +105,7 @@ public class AgentRepository {
      * Update agent.
      */
     public void update(AgentModel agent) {
-        String sql = "UPDATE agent_table SET " +
+        String sql = "UPDATE agents SET " +
                 "full_name = ?, " +
                 "contact_email = ?, " +
                 "contact_number = ?, " +
@@ -104,7 +115,8 @@ public class AgentRepository {
                 "online = ?, " +
                 "active_tickets = ?, " +
                 "specialties = ?, " +
-                "available = ? " +
+                "available = ?, " +
+                "updated_at = ? " +
                 "WHERE user_id = ?";
 
         jdbcTemplate.update(sql,
@@ -118,6 +130,7 @@ public class AgentRepository {
                 agent.getActiveTickets(),
                 specialtiesToJson(agent.getSpecialties()),
                 agent.isAvailable(),
+                LocalDateTime.now(),
                 agent.getUserId()
         );
     }
@@ -126,7 +139,7 @@ public class AgentRepository {
      * Find agent by user ID.
      */
     public AgentModel findByUserId(Long userId) {
-        String sql = "SELECT * FROM agent_table WHERE user_id = ?";
+        String sql = "SELECT * FROM agents WHERE user_id = ?";
 
         List<AgentModel> list = jdbcTemplate.query(sql, this::mapRowToAgent, userId);
         return list.isEmpty() ? null : list.get(0);
@@ -136,7 +149,7 @@ public class AgentRepository {
      * Check if agent exists.
      */
     public boolean existsByUserId(Long userId) {
-        String sql = "SELECT COUNT(*) FROM agent_table WHERE user_id = ?";
+        String sql = "SELECT COUNT(*) FROM agents WHERE user_id = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, userId);
         return count != null && count > 0;
     }
@@ -145,7 +158,7 @@ public class AgentRepository {
      * Get all agents.
      */
     public List<AgentModel> findAll() {
-        String sql = "SELECT * FROM agent_table";
+        String sql = "SELECT * FROM agents";
         return jdbcTemplate.query(sql, this::mapRowToAgent);
     }
 
@@ -153,7 +166,7 @@ public class AgentRepository {
      * Find all available agents.
      */
     public List<AgentModel> findAvailableAgents() {
-        String sql = "SELECT * FROM agent_table WHERE available = TRUE";
+        String sql = "SELECT * FROM agents WHERE available = TRUE";
         return jdbcTemplate.query(sql, this::mapRowToAgent);
     }
 
@@ -161,7 +174,7 @@ public class AgentRepository {
      * Delete agent by user_id.
      */
     public void deleteByUserId(Long userId) {
-        String sql = "DELETE FROM agent_table WHERE user_id = ?";
+        String sql = "DELETE FROM agents WHERE user_id = ?";
         jdbcTemplate.update(sql, userId);
     }
 }

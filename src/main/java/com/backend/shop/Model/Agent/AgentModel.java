@@ -1,25 +1,68 @@
 package com.backend.shop.Model.Agent;
 
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * AgentModel represents support agent information and status.
+ * It is mapped to the "agents" table in the database.
+ */
+@Entity
+@Table(name = "agents")
 public class AgentModel {
 
+    // Primary key, also foreign key to users.id
+    @Id
+    @Column(name = "user_id", nullable = false)
     private Long userId;
 
+    @Column(name = "full_name", length = 200)
     private String fullName;
+
+    @Column(name = "contact_email", length = 200)
     private String contactEmail;
+
+    @Column(name = "contact_number", length = 50)
     private String contactNumber;
 
+    @Column(name = "employee_id", length = 100)
     private String employeeId;
+
+    @Column(name = "department", length = 100)
     private String department;
+
+    @Column(name = "shift", length = 100)
     private String shift;
 
+    @Column(name = "online")
     private boolean online;
+
+    @Column(name = "active_tickets")
     private int activeTickets;
 
+    /**
+     * List of specialties for the agent.
+     * Stored as a JSON string in the "specialties" column by the repository.
+     * JPA mapping is not directly used for this field.
+     */
+    @Transient
     private List<String> specialties;
 
+    @Column(name = "available")
     private boolean available;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    // Default constructor required by JPA
+    public AgentModel() {
+    }
+
+    // Getters and setters
 
     public Long getUserId() {
         return userId;
@@ -107,5 +150,21 @@ public class AgentModel {
 
     public void setAvailable(boolean available) {
         this.available = available;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

@@ -1,8 +1,9 @@
-package com.backend.shop.Model;
+package com.backend.shop.Model.Session;
 
 /**
  * A simple authentication result object to represent a logged-in user.
  * This object is typically stored in the session.
+ * no need JPA (No need connect to MySQL), because it is using for session.
  */
 public class AuthenticatedUser {
 

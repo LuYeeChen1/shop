@@ -1,7 +1,7 @@
 package com.backend.shop.Controller;
 
 import com.backend.shop.DataTransferObject.LoginDTO;
-import com.backend.shop.Model.AuthenticatedUser;
+import com.backend.shop.Model.Session.AuthenticatedUser;
 import com.backend.shop.Service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;

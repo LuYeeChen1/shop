@@ -1,7 +1,7 @@
 package com.backend.shop.Service;
 
 import com.backend.shop.DataTransferObject.LoginDTO;
-import com.backend.shop.Model.AuthenticatedUser;
+import com.backend.shop.Model.Session.AuthenticatedUser;
 import org.springframework.stereotype.Service;
 
 /**

@@ -1,6 +1,6 @@
 package com.backend.shop.Controller.AdminController;
 
-import com.backend.shop.Model.AuthenticatedUser;
+import com.backend.shop.Model.Session.AuthenticatedUser;
 import com.backend.shop.Model.UserModel;
 import com.backend.shop.Service.UserService;
 import jakarta.servlet.http.HttpSession;

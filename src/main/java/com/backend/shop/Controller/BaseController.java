@@ -1,13 +1,11 @@
 package com.backend.shop.Controller;
 
-import com.backend.shop.Model.AuthenticatedUser;
+import com.backend.shop.Model.Session.AuthenticatedUser;
 import com.backend.shop.Model.Seller.SellerModel;
-import com.backend.shop.Model.Seller.SellerStatus;
 import com.backend.shop.Repository.SellerRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import java.util.List;
 
 public class BaseController {
 
