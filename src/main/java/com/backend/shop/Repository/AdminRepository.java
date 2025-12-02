@@ -18,6 +18,9 @@ public class AdminRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    /**
+     * Map a ResultSet row to AdminModel.
+     */
     private AdminModel mapRowToAdmin(ResultSet rs, int rowNum) throws SQLException {
         AdminModel admin = new AdminModel();
         admin.setAdminId(rs.getLong("admin_id"));
@@ -41,23 +44,36 @@ public class AdminRepository {
         return admin;
     }
 
+    /**
+     * Find admin by username.
+     */
     public AdminModel findByUsername(String username) {
         String sql = "SELECT * FROM admins WHERE username = ?";
         List<AdminModel> list = jdbcTemplate.query(sql, this::mapRowToAdmin, username);
         return list.isEmpty() ? null : list.get(0);
     }
 
+    /**
+     * Check if admin username already exists.
+     */
     public boolean existsByUsername(String username) {
         String sql = "SELECT COUNT(*) FROM admins WHERE username = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, username);
         return count != null && count > 0;
     }
 
+    /**
+     * Save a new admin record.
+     * created_at and updated_at will both use the current time.
+     */
     public void save(AdminModel admin) {
         String sql = "INSERT INTO admins (" +
                 "username, password, full_name, contact_email, contact_number, " +
-                "can_approve_seller, can_manage_products, can_view_reports, can_manage_agents, created_at" +
-                ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "can_approve_seller, can_manage_products, can_view_reports, can_manage_agents, " +
+                "created_at, updated_at" +
+                ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        LocalDateTime now = LocalDateTime.now();
 
         jdbcTemplate.update(sql,
                 admin.getUsername(),
@@ -69,7 +85,8 @@ public class AdminRepository {
                 admin.isCanManageProducts(),
                 admin.isCanViewReports(),
                 admin.isCanManageAgents(),
-                LocalDateTime.now()
+                now,
+                now
         );
     }
 }
