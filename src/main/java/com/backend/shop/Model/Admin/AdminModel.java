@@ -4,17 +4,23 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 /**
- * AdminModel represents admin-specific information and permissions.
+ * AdminModel represents admin-specific account and permissions.
  * It is mapped to the "admins" table in the database.
  */
 @Entity
 @Table(name = "admins")
 public class AdminModel {
 
-    // Primary key, also foreign key to users.id
     @Id
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "admin_id")
+    private Long adminId;
+
+    @Column(name = "username", nullable = false, unique = true, length = 200)
+    private String username;
+
+    @Column(name = "password", nullable = false, length = 255)
+    private String password;
 
     @Column(name = "full_name", length = 200)
     private String fullName;
@@ -37,26 +43,37 @@ public class AdminModel {
     @Column(name = "can_manage_agents")
     private boolean canManageAgents;
 
-    // Timestamp when admin record is created
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    // Timestamp when admin record is last updated
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // Default constructor for JPA
     public AdminModel() {
     }
 
-    // Getters and Setters
-
-    public Long getUserId() {
-        return userId;
+    public Long getAdminId() {
+        return adminId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setAdminId(Long adminId) {
+        this.adminId = adminId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getFullName() {

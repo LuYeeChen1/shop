@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -29,10 +30,18 @@ public class UserRepository {
         user.setUsername(rs.getString("username"));
         user.setPassword(rs.getString("password"));
 
-        // user_role -> enum
-        String roleStr = rs.getString("user_role");
+        // role -> enum
+        String roleStr = rs.getString("role");
         if (roleStr != null) {
             user.setRole(UserRole.valueOf(roleStr));
+        }
+
+        // Map created_at / updated_at if present
+        if (rs.getTimestamp("created_at") != null) {
+            user.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+        }
+        if (rs.getTimestamp("updated_at") != null) {
+            user.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
         }
 
         return user;
@@ -49,11 +58,11 @@ public class UserRepository {
     public Long createUser(String email, String password, String username, UserRole role) {
 
         String sql = """
-            INSERT INTO users (email, password, username, user_role, created_at)
-            VALUES (?, ?, ?, ?, NOW())
+            INSERT INTO users (email, username, password, role, created_at, updated_at)
+            VALUES (?, ?, ?, ?, NOW(), NOW())
         """;
 
-        jdbcTemplate.update(sql, email, password, username, role.name());
+        jdbcTemplate.update(sql, email, username, password, role.name());
 
         // Retrieve generated user_id
         String fetchIdSql = "SELECT user_id FROM users WHERE email = ?";
@@ -138,7 +147,7 @@ public class UserRepository {
     public void updateUserRole(Long userId, UserRole newRole) {
         String sql = """
             UPDATE users
-            SET user_role = ?, updated_at = NOW()
+            SET role = ?, updated_at = NOW()
             WHERE user_id = ?
         """;
 

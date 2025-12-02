@@ -30,6 +30,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserModel registerNewUser(RegisterDTO registerDTO) {
+        // Default role: CUSTOMER
         return registerNewUser(registerDTO, UserRole.CUSTOMER);
     }
 
@@ -50,7 +51,7 @@ public class UserServiceImpl implements UserService {
                 registerDTO.getEmail(),
                 encodedPassword,
                 registerDTO.getUsername(),
-                role        // Change to UserRole, Not String
+                role
         );
 
         // Return created user
@@ -92,9 +93,14 @@ public class UserServiceImpl implements UserService {
         return userRepository.emailExists(email);
     }
 
+    /**
+     * In the new design, admin accounts are stored in the separate "admins" table,
+     * not in the "users" table. Therefore this method always returns false for UserModel.
+     * Use Admin-related services to check admin permissions instead.
+     */
     @Override
     public boolean isAdmin(UserModel user) {
-        return user != null && user.getRole() == UserRole.ADMIN;
+        return false;
     }
 
     @Override

@@ -1,19 +1,28 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Admin Dashboard</title>
 </head>
 <body>
 
-<!-- Include top navbar -->
-<div th:replace="fragments/navbar :: navbar"></div>
-
 <h2>Admin Dashboard</h2>
 
+<div th:if="${admin != null}">
+    <p>
+        Welcome,
+        <span th:text="${admin.username}">Admin Name</span>
+        (<span th:text="${admin.role}">ADMIN</span>)
+    </p>
+
+    <p th:if="${admin.email}">
+        Email: <span th:text="${admin.email}">admin@example.com</span>
+    </p>
+</div>
+
 <ul>
-    <li><a th:href="@{/admin/users}">View All Users</a></li>
-    <li><a th:href="@{/admin/seller-applications}">Review Seller Applications</a></li>
+    <li><a th:href="@{/admin/dashboard}">Dashboard Home</a></li>
+    <li><a th:href="@{/admin/logout}">Logout</a></li>
 </ul>
 
 </body>

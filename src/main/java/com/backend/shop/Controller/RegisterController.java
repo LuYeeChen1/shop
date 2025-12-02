@@ -2,10 +2,8 @@ package com.backend.shop.Controller;
 
 import com.backend.shop.DataTransferObject.RegisterDTO;
 import com.backend.shop.Model.UserModel;
-import com.backend.shop.Model.UserRole;
 import com.backend.shop.Service.UserService;
 import jakarta.validation.Valid;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,14 +28,14 @@ public class RegisterController {
     public String processRegister(
             @Valid @ModelAttribute("registerDTO") RegisterDTO registerDTO,
             BindingResult bindingResult,
-            Model model,
-            HttpSession session
+            Model model
     ) {
         if (bindingResult.hasErrors()) {
             return "register";
         }
 
-        UserModel createdUser = userService.registerNewUser(registerDTO, UserRole.CUSTOMER);
+        // Use default role (CUSTOMER) from service
+        UserModel createdUser = userService.registerNewUser(registerDTO);
 
         if (createdUser == null) {
             model.addAttribute("registerError", "Email is already registered.");

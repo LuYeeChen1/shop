@@ -48,11 +48,9 @@ public class LoginController {
         // Store only AuthenticatedUser in session
         session.setAttribute("loggedInUser", authUser);
 
-        // Redirect based on role
+        // Redirect based on role (role comes from users.role enum)
         String role = authUser.getRole();
-        if ("ADMIN".equals(role)) {
-            return "redirect:/admin/dashboard";
-        } else if ("AGENT".equals(role)) {
+        if ("AGENT".equals(role)) {
             return "redirect:/agent/dashboard";
         } else if ("SELLER".equals(role)) {
             return "redirect:/seller/dashboard";
