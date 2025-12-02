@@ -11,19 +11,10 @@
 <div th:if="${admin != null}">
     <p>
         Welcome,
-        <span th:text="${admin.username}">Admin Name</span>
+        <span th:text="${admin.username}">Admin</span>
         (<span th:text="${admin.role}">ADMIN</span>)
     </p>
-
-    <p th:if="${admin.email}">
-        Email: <span th:text="${admin.email}">admin@example.com</span>
-    </p>
 </div>
-
-<ul>
-    <li><a th:href="@{/admin/dashboard}">Dashboard Home</a></li>
-    <li><a th:href="@{/admin/logout}">Logout</a></li>
-</ul>
 
 </body>
 </html>

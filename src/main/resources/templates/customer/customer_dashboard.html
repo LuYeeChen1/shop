@@ -1,100 +1,18 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Customer Dashboard</title>
 </head>
 <body>
 
-<!-- Top navbar (role, logout, switch buttons) -->
-<div th:replace="fragments/navbar :: navbar"></div>
-
 <h2>Customer Dashboard</h2>
 
-<!-- Simple welcome text -->
-<div th:if="${currentUser != null}">
-    <p>
-        Welcome,
-        <span th:text="${currentUser.username}">username</span>
-        (<span th:text="${currentUser.email}">email@example.com</span>)
-    </p>
-</div>
+<p>Welcome, Customer!</p>
 
-<hr/>
-
-<!-- Case 1: Never applied as seller (seller == null) -->
-<div th:if="${seller == null}">
-    <p>You have not applied to become a seller yet.</p>
-
-    <form th:action="@{/customer/apply-seller}" method="post">
-        <button type="submit">Apply to become Seller</button>
-    </form>
-</div>
-
-<!-- Case 2: Application is PENDING -->
-<div th:if="${seller != null
-            and seller.status == T(com.backend.shop.Model.Seller.SellerStatus).PENDING}">
-    <p>Your seller application is currently <strong>PENDING</strong>. Please wait for admin review.</p>
-
-    <p th:if="${seller.appliedAt != null}">
-        Applied at:
-        <span th:text="${seller.appliedAt}">2025-01-01T12:00</span>
-    </p>
-</div>
-
-<!-- Case 3: Application is APPROVED -->
-<div th:if="${seller != null
-            and seller.status == T(com.backend.shop.Model.Seller.SellerStatus).APPROVED}">
-    <p>Your seller application has been <strong>APPROVED</strong>.</p>
-
-    <p th:if="${seller.reviewedAt != null}">
-        Reviewed at:
-        <span th:text="${seller.reviewedAt}">2025-01-02T12:00</span>
-    </p>
-
-    <p th:if="${seller.reviewedByAdmin != null}">
-        Reviewed by:
-        <span th:text="${seller.reviewedByAdmin}">admin@shop.com</span>
-    </p>
-
-    <p th:if="${seller.reviewComment != null}">
-        Comment:
-        <span th:text="${seller.reviewComment}">Approved</span>
-    </p>
-
-    <!-- Enter seller mode (update role + redirect to seller dashboard) -->
-    <form th:action="@{/customer/enter-seller}" method="post">
-        <button type="submit">Enter Seller Mode</button>
-    </form>
-</div>
-
-<!-- Case 4: Application is REJECTED -->
-<div th:if="${seller != null
-            and seller.status == T(com.backend.shop.Model.Seller.SellerStatus).REJECTED}">
-    <p>Your seller application has been <strong>REJECTED</strong>.</p>
-
-    <p th:if="${seller.reviewComment != null}">
-        Reason:
-        <span th:text="${seller.reviewComment}">Some reason</span>
-    </p>
-
-    <p>You can submit a new application.</p>
-
-    <!-- Apply again -->
-    <form th:action="@{/customer/apply-seller}" method="post">
-        <button type="submit">Apply again</button>
-    </form>
-</div>
-
-<!-- Optional: unknown status guard -->
-<div th:if="${seller != null
-            and seller.status != T(com.backend.shop.Model.Seller.SellerStatus).PENDING
-            and seller.status != T(com.backend.shop.Model.Seller.SellerStatus).APPROVED
-            and seller.status != T(com.backend.shop.Model.Seller.SellerStatus).REJECTED}">
-    <p>Unknown seller status:
-        <span th:text="${seller.status}">UNKNOWN</span>
-    </p>
-</div>
+<p>
+    <a th:href="@{/logout}">Logout</a>
+</p>
 
 </body>
 </html>

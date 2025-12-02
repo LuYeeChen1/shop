@@ -1,22 +1,14 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Seller Dashboard</title>
 </head>
 <body>
 
-<!-- Include top navbar -->
-<div th:replace="fragments/navbar :: navbar"></div>
-
 <h2>Seller Dashboard</h2>
 
-<p>Welcome, seller!</p>
-
-<!-- Switch role back to customer -->
-<form th:action="@{/switch-to-customer}" method="post">
-    <button type="submit">Switch back to Customer</button>
-</form>
+<p>Welcome, Seller!</p>
 
 </body>
 </html>

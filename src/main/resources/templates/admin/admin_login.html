@@ -8,6 +8,10 @@
 
 <h2>Admin Login</h2>
 
+<div th:if="${loginError}">
+    <p th:text="${loginError}" style="color:red;"></p>
+</div>
+
 <form th:action="@{/admin/login}" method="post">
     <div>
         <label>Username:</label>
@@ -17,10 +21,6 @@
     <div>
         <label>Password:</label>
         <input type="password" name="password"/>
-    </div>
-
-    <div th:if="${loginError}">
-        <p th:text="${loginError}" style="color:red;"></p>
     </div>
 
     <button type="submit">Login</button>
