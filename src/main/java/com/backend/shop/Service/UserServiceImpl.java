@@ -65,17 +65,29 @@ public class UserServiceImpl implements UserService {
     @Override
     public AuthenticatedUser authenticate(String email, String rawPassword) {
 
+        // Step 1: Fetch user by email
         UserModel user = userRepository.findByEmail(email);
         if (user == null) {
+            System.out.println("User not found for email = " + email);
             return null;
         }
 
+        // Debug logs for testing
+        System.out.println("===== AUTH DEBUG START =====");
+        System.out.println("Found user email      = " + user.getEmail());
+        System.out.println("Stored hash     = " + user.getPassword());
+        System.out.println("Raw password    = " + rawPassword);
+
+        // Step 2: Compare raw password with stored hash
         boolean passwordMatch = passwordEncoder.matches(rawPassword, user.getPassword());
+        System.out.println("Match result    = " + passwordMatch);
+        System.out.println("===== AUTH DEBUG END =====");
+
         if (!passwordMatch) {
             return null;
         }
 
-        // Return safe object for session
+        // Step 3: Build safe session object
         return new AuthenticatedUser(
                 user.getId(),
                 user.getEmail(),
@@ -83,6 +95,7 @@ public class UserServiceImpl implements UserService {
                 user.getRole().name()
         );
     }
+
 
     // ============================================================
     // UTILITIES

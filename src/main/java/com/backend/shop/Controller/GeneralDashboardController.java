@@ -10,7 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class DashboardController {
+public class GeneralDashboardController {
 
     @Autowired
     private SellerRepository sellerRepository;
@@ -62,17 +62,5 @@ public class DashboardController {
             return "access-denied";
         }
         return "agent/agent_dashboard";
-    }
-
-    @GetMapping("/admin/dashboard")
-    public String adminDashboard(HttpSession session) {
-        AuthenticatedUser user = getLoggedInUser(session);
-        if (user == null) {
-            return "redirect:/login";
-        }
-        if (!"ADMIN".equals(user.getRole())) {
-            return "access-denied";
-        }
-        return "admin/admin_dashboard";
     }
 }

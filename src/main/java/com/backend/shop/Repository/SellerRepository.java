@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -31,11 +32,12 @@ public class SellerRepository {
         s.setShopDescription(rs.getString("shop_description"));
         s.setShopLogoUrl(rs.getString("shop_logo_url"));
 
-        s.setBusinessRegistrationNumber(rs.getString("business_reg_no"));
+        // Match SellerModel field name: business_registration_number
+        s.setBusinessRegistrationNumber(rs.getString("business_registration_number"));
         s.setBusinessAddress(rs.getString("business_address"));
         s.setContactNumber(rs.getString("contact_number"));
 
-        // Convert VARCHAR → Enum
+        // Convert VARCHAR/ENUM → Enum
         String statusStr = rs.getString("status");
         if (statusStr != null) {
             try {
@@ -60,6 +62,16 @@ public class SellerRepository {
         s.setReviewedByAdmin(rs.getString("reviewed_by_admin"));
         s.setReviewComment(rs.getString("review_comment"));
 
+        Timestamp createdAt = rs.getTimestamp("created_at");
+        if (createdAt != null) {
+            s.setCreatedAt(createdAt.toLocalDateTime());
+        }
+
+        Timestamp updatedAt = rs.getTimestamp("updated_at");
+        if (updatedAt != null) {
+            s.setUpdatedAt(updatedAt.toLocalDateTime());
+        }
+
         return s;
     }
 
@@ -68,18 +80,23 @@ public class SellerRepository {
      */
     public void save(SellerModel seller) {
         String sql = """
-            INSERT INTO seller_table (
+            INSERT INTO sellers (
                 user_id,
                 shop_name,
                 shop_description,
                 shop_logo_url,
-                business_reg_no,
+                business_registration_number,
                 business_address,
                 contact_number,
                 status,
-                applied_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                applied_at,
+                created_at,
+                updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """;
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime appliedAt = seller.getAppliedAt() != null ? seller.getAppliedAt() : now;
 
         jdbcTemplate.update(sql,
                 seller.getUserId(),
@@ -90,7 +107,9 @@ public class SellerRepository {
                 seller.getBusinessAddress(),
                 seller.getContactNumber(),
                 seller.getStatus() != null ? seller.getStatus().name() : null,
-                seller.getAppliedAt()      // You can set this to LocalDateTime.now() before saving
+                appliedAt,
+                now,
+                now
         );
     }
 
@@ -99,13 +118,14 @@ public class SellerRepository {
      */
     public void updateProfile(SellerModel seller) {
         String sql = """
-            UPDATE seller_table SET
+            UPDATE sellers SET
                 shop_name = ?,
                 shop_description = ?,
                 shop_logo_url = ?,
-                business_reg_no = ?,
+                business_registration_number = ?,
                 business_address = ?,
-                contact_number = ?
+                contact_number = ?,
+                updated_at = NOW()
             WHERE user_id = ?
             """;
 
@@ -124,7 +144,7 @@ public class SellerRepository {
      * Find seller by user ID.
      */
     public SellerModel findByUserId(Long userId) {
-        String sql = "SELECT * FROM seller_table WHERE user_id = ?";
+        String sql = "SELECT * FROM sellers WHERE user_id = ?";
 
         List<SellerModel> list = jdbcTemplate.query(sql, this::mapRowToSeller, userId);
         return list.isEmpty() ? null : list.get(0);
@@ -134,7 +154,7 @@ public class SellerRepository {
      * Check if a seller record exists for the given user.
      */
     public boolean existsByUserId(Long userId) {
-        String sql = "SELECT COUNT(*) FROM seller_table WHERE user_id = ?";
+        String sql = "SELECT COUNT(*) FROM sellers WHERE user_id = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, userId);
         return count != null && count > 0;
     }
@@ -144,7 +164,7 @@ public class SellerRepository {
      * Useful for admin to list PENDING / APPROVED / REJECTED.
      */
     public List<SellerModel> findByStatus(SellerStatus status) {
-        String sql = "SELECT * FROM seller_table WHERE status = ?";
+        String sql = "SELECT * FROM sellers WHERE status = ?";
         return jdbcTemplate.query(sql, this::mapRowToSeller, status.name());
     }
 
@@ -152,7 +172,7 @@ public class SellerRepository {
      * Get all sellers.
      */
     public List<SellerModel> findAll() {
-        String sql = "SELECT * FROM seller_table";
+        String sql = "SELECT * FROM sellers";
         return jdbcTemplate.query(sql, this::mapRowToSeller);
     }
 
@@ -162,11 +182,12 @@ public class SellerRepository {
      */
     public void updateStatus(Long userId, SellerStatus newStatus, String adminEmail, String comment) {
         String sql = """
-            UPDATE seller_table SET 
+            UPDATE sellers SET 
                 status = ?, 
                 reviewed_by_admin = ?, 
                 review_comment = ?, 
-                reviewed_at = NOW()
+                reviewed_at = NOW(),
+                updated_at = NOW()
             WHERE user_id = ?
             """;
 
@@ -182,7 +203,7 @@ public class SellerRepository {
      * Count how many applications are still PENDING.
      */
     public int countPending() {
-        String sql = "SELECT COUNT(*) FROM seller_table WHERE status = 'PENDING'";
+        String sql = "SELECT COUNT(*) FROM sellers WHERE status = 'PENDING'";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
         return count == null ? 0 : count;
     }
@@ -191,7 +212,7 @@ public class SellerRepository {
      * Delete seller record by user_id.
      */
     public void deleteByUserId(Long userId) {
-        String sql = "DELETE FROM seller_table WHERE user_id = ?";
+        String sql = "DELETE FROM sellers WHERE user_id = ?";
         jdbcTemplate.update(sql, userId);
     }
 }
