@@ -4,7 +4,7 @@ import com.backend.shop.DataTransferObject.Seller.SellerDashboardDTO;
 import com.backend.shop.Model.Seller.SellerModel;
 import com.backend.shop.Model.Seller.SellerStatus;
 import com.backend.shop.Model.Session.AuthenticatedUser;
-import com.backend.shop.Repository.SellerRepository;
+import com.backend.shop.Repository.Seller.SellerRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

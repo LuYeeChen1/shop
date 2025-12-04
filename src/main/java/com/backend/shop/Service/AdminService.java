@@ -1,7 +1,7 @@
 package com.backend.shop.Service;
 
 import com.backend.shop.Model.Admin.AdminModel;
-import com.backend.shop.Repository.AdminRepository;
+import com.backend.shop.Repository.Admin.AdminRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

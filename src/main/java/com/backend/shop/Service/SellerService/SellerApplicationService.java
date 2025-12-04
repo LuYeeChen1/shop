@@ -4,7 +4,7 @@ import com.backend.shop.DataTransferObject.Seller.SellerApplicationDTO;
 import com.backend.shop.DataTransferObject.Seller.SellerProfileUpdateDTO;
 import com.backend.shop.Model.Seller.SellerModel;
 import com.backend.shop.Model.Seller.SellerStatus;
-import com.backend.shop.Repository.SellerRepository;
+import com.backend.shop.Repository.Seller.SellerRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

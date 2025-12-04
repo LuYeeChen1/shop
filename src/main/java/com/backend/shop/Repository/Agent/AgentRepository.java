@@ -1,4 +1,4 @@
-package com.backend.shop.Repository;
+package com.backend.shop.Repository.Agent;
 
 import com.backend.shop.Model.Agent.AgentModel;
 import com.fasterxml.jackson.core.JsonProcessingException;

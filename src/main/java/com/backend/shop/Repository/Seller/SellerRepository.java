@@ -1,4 +1,4 @@
-package com.backend.shop.Repository;
+package com.backend.shop.Repository.Seller;
 
 import com.backend.shop.Model.Seller.SellerModel;
 import com.backend.shop.Model.Seller.SellerStatus;

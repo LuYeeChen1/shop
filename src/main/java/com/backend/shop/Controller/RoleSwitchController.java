@@ -5,7 +5,7 @@ import com.backend.shop.Model.Seller.SellerModel;
 import com.backend.shop.Model.Seller.SellerStatus;
 import com.backend.shop.Model.UserModel;
 import com.backend.shop.Model.UserRole;
-import com.backend.shop.Repository.SellerRepository;
+import com.backend.shop.Repository.Seller.SellerRepository;
 import com.backend.shop.Service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;

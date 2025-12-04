@@ -1,4 +1,4 @@
-package com.backend.shop.Repository;
+package com.backend.shop.Repository.Admin;
 
 import com.backend.shop.Model.Admin.AdminModel;
 import org.springframework.jdbc.core.JdbcTemplate;

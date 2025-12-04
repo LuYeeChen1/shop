@@ -1,7 +1,7 @@
 package com.backend.shop.Service.SellerService;
 
 import com.backend.shop.Model.Seller.SellerStatus;
-import com.backend.shop.Repository.SellerRepository;
+import com.backend.shop.Repository.Seller.SellerRepository;
 import org.springframework.stereotype.Service;
 
 @Service

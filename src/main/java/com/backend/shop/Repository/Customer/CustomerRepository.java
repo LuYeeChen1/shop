@@ -1,4 +1,4 @@
-package com.backend.shop.Repository;
+package com.backend.shop.Repository.Customer;
 
 import com.backend.shop.Model.Customer.CustomerModel;
 import org.springframework.jdbc.core.JdbcTemplate;

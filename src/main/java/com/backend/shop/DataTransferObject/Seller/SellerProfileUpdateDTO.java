@@ -1,23 +1,33 @@
 package com.backend.shop.DataTransferObject.Seller;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
+/**
+ * DTO for updating seller profile.
+ * Contains editable shop and business fields.
+ */
 public class SellerProfileUpdateDTO {
 
-    @NotBlank
+    @NotBlank(message = "Shop name is required")
+    @Size(max = 255, message = "Shop name must not exceed 255 characters")
     private String shopName;
 
+    @NotBlank(message = "Shop description is required")
     private String shopDescription;
 
+    @Size(max = 500, message = "Shop logo URL must not exceed 500 characters")
     private String shopLogoUrl;
 
-    @NotBlank
+    @NotBlank(message = "Business registration number is required")
+    @Size(max = 100, message = "Business registration number must not exceed 100 characters")
     private String businessRegistrationNumber;
 
-    @NotBlank
+    @NotBlank(message = "Business address is required")
     private String businessAddress;
 
-    @NotBlank
+    @NotBlank(message = "Contact number is required")
+    @Size(max = 50, message = "Contact number must not exceed 50 characters")
     private String contactNumber;
 
     // Getters and setters
