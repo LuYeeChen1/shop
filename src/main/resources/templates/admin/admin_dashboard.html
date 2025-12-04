@@ -6,13 +6,51 @@
 </head>
 <body>
 
+<!-- Navbar (if you use fragments, include it here)
+<div th:replace="fragments/navbar :: navbar"></div>
+-->
+
 <h2>Admin Dashboard</h2>
 
+<!-- Display admin info -->
 <div th:if="${admin != null}">
     <p>
         Welcome,
-        <span th:text="${admin.username}">Admin</span>
+        <strong th:text="${admin.username}">Admin</strong>
         (<span th:text="${admin.role}">ADMIN</span>)
+    </p>
+</div>
+
+<hr>
+
+<!-- Admin-only options -->
+<h3>Admin Management Options</h3>
+
+<ul>
+    <!-- View All Users -->
+    <li th:if="${navbarRole == 'Admin'}">
+        <a th:href="@{/admin/users}">View All Users</a>
+    </li>
+
+    <!-- All Sellers List -->
+    <li th:if="${navbarRole == 'Admin'}">
+        <a th:href="@{/admin/seller-list}">View All Sellers</a>
+    </li>
+
+    <!-- Pending Seller Applications -->
+    <li th:if="${navbarRole == 'Admin'}">
+        <a th:href="@{/admin/seller-applications}">Pending Seller Applications</a>
+    </li>
+</ul>
+
+<hr>
+
+<!-- Show global navbar identity (Role / ID / Username) -->
+<div>
+    <p><strong>Role:</strong> <span th:text="${navbarRole}"></span></p>
+    <p><strong>ID:</strong> <span th:text="${navbarUserId}"></span></p>
+    <p th:if="${navbarUsername != null}">
+        <strong>Username:</strong> <span th:text="${navbarUsername}"></span>
     </p>
 </div>
 

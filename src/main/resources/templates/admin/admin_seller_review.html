@@ -6,42 +6,33 @@
 </head>
 <body>
 
-<!-- Top navbar -->
-<div th:replace="fragments/navbar :: navbar"></div>
-
-<h2>Pending Seller Applications</h2>
+<h1>Pending Seller Applications</h1>
 
 <table border="1">
     <thead>
     <tr>
         <th>User ID</th>
         <th>Shop Name</th>
-        <th>Shop Description</th>
-        <th>Business Reg No</th>
+        <th>Business Registration No</th>
         <th>Applied At</th>
         <th>Actions</th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="s : ${applications}">
-        <td th:text="${s.userId}">1</td>
-        <td th:text="${s.shopName}">My Shop</td>
-        <td th:text="${s.shopDescription}">Description</td>
-        <td th:text="${s.businessRegistrationNumber}">BRN123</td>
-        <td th:text="${s.appliedAt}">2025-01-01T12:00</td>
+    <tr th:each="app : ${applications}">
+        <td th:text="${app.userId}"></td>
+        <td th:text="${app.shopName}"></td>
+        <td th:text="${app.businessRegistrationNumber}"></td>
+        <td th:text="${app.appliedAt}"></td>
         <td>
             <!-- Approve form -->
-            <form th:action="@{'/admin/seller-approve/' + ${s.userId}}"
-                  method="post"
-                  style="display:inline;">
+            <form th:action="@{'/admin/seller-approve/' + ${app.userId}}" method="post" style="display:inline;">
                 <button type="submit">Approve</button>
             </form>
 
             <!-- Reject form with comment -->
-            <form th:action="@{'/admin/seller-reject/' + ${s.userId}}"
-                  method="post"
-                  style="display:inline;">
-                <input type="text" name="comment" placeholder="Reason (optional)"/>
+            <form th:action="@{'/admin/seller-reject/' + ${app.userId}}" method="post" style="display:inline;">
+                <input type="text" name="comment" placeholder="Reject comment (optional)">
                 <button type="submit">Reject</button>
             </form>
         </td>

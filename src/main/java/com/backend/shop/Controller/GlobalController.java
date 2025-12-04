@@ -2,6 +2,7 @@ package com.backend.shop.Controller;
 
 import com.backend.shop.Model.Admin.AdminModel;
 import com.backend.shop.Model.Seller.SellerModel;
+import com.backend.shop.Model.Seller.SellerStatus;
 import com.backend.shop.Model.UserModel;
 import com.backend.shop.Repository.AdminRepository;
 import com.backend.shop.Repository.SellerRepository;
@@ -43,18 +44,20 @@ public class GlobalController {
         UserModel user = (UserModel) session.getAttribute("loggedInUser");
         if (user != null) {
 
-            // If seller exists → role = Seller
             SellerModel seller = sellerRepository.findByUserId(user.getId());
-            if (seller != null) {
+
+            // Only APPROVED seller should be treated as Seller role
+            if (seller != null && seller.getStatus() == SellerStatus.APPROVED) {
                 return "Seller";
             }
 
-            // Otherwise customer
+            // PENDING / REJECTED / DEACTIVATED / null → treat as Customer
             return "Customer";
         }
 
         return null;
     }
+
 
     /**
      * Provide user ID for navbar

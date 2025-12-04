@@ -1,94 +1,64 @@
-<!-- fragments/navbar.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
 <body>
+<nav>
+    <ul>
+        <!-- Home -->
+        <li><a th:href="@{/}">Home</a></li>
 
-<!-- NAVBAR FRAGMENT -->
-<div th:fragment="navbar">
+        <!-- Customer dashboard -->
+        <li th:if="${navbarRole == 'Customer'}">
+            <a th:href="@{/customer/dashboard}">Customer Dashboard</a>
+        </li>
 
-    <div style="background: #eee; padding: 10px; display: flex; justify-content: space-between;">
+        <!-- Seller dashboard -->
+        <li th:if="${navbarRole == 'Seller'}">
+            <a th:href="@{/seller/dashboard}">Seller Dashboard</a>
+        </li>
 
-        <!-- Left side menu -->
-        <div>
-            <a href="/" style="margin-right: 20px;">Home</a>
+        <!-- Admin dashboard -->
+        <li th:if="${navbarRole == 'Admin'}">
+            <a th:href="@{/admin/dashboard}">Admin Dashboard</a>
+        </li>
 
-            <!-- ADMIN MENU -->
-            <span th:if="${currentUser != null and currentUser.role == 'ADMIN'}">
-                <a href="/admin/dashboard">Admin Dashboard</a> |
-                <a href="/admin/users">User List</a> |
-                <!-- Show pending seller count -->
-                <span style="color:red; font-weight:bold;">
-                    Pending Seller Requests:
-                    <span th:text="${pendingSellerCount}">0</span>
-                </span>
-            </span>
+        <!-- ========================== -->
+        <!-- Admin-only Navigation Menu -->
+        <!-- ========================== -->
+        <li th:if="${navbarRole == 'Admin'}">
+            <a th:href="@{/admin/users}">View All Users</a>
+        </li>
 
+        <li th:if="${navbarRole == 'Admin'}">
+            <a th:href="@{/admin/seller-list}">All Sellers</a>
+        </li>
 
-            <!-- AGENT MENU -->
-            <span th:if="${currentUser != null and currentUser.role == 'AGENT'}">
-                <a href="/agent/dashboard">Agent Dashboard</a>
-            </span>
+        <li th:if="${navbarRole == 'Admin'}">
+            <a th:href="@{/admin/seller-applications}">Pending Seller Applications</a>
+        </li>
+        <!-- ========================== -->
 
-            <!-- CUSTOMER MENU -->
-            <span th:if="${currentUser != null and currentUser.role == 'CUSTOMER'}">
-                <a href="/customer/dashboard">Customer Dashboard</a>
-            </span>
+        <!-- Role / ID / Username -->
+        <li th:if="${navbarRole != null}">
+            <span th:text="'Role: ' + ${navbarRole}"></span>
+        </li>
+        <li th:if="${navbarUserId != null}">
+            <span th:text="'ID: ' + ${navbarUserId}"></span>
+        </li>
+        <li th:if="${navbarUsername != null}">
+            <span th:text="'Username: ' + ${navbarUsername}"></span>
+        </li>
 
-            <!-- SELLER MENU -->
-            <span th:if="${currentUser != null and currentUser.role == 'SELLER'}">
-                <a href="/seller/dashboard">Seller Dashboard</a>
-            </span>
-        </div>
-
-
-        <!-- Right side (user info + role switch + logout) -->
-        <div>
-            <!-- Logged in user -->
-            <span th:if="${currentUser != null}">
-                <strong th:text="${currentUser.username}">username</strong>
-                (<span th:text="${currentUser.email}">email</span>)
-            </span>
-
-
-            <!-- ROLE SWITCHING BUTTONS -->
-            <!-- CUSTOMER -> SELLER (only if approved) -->
-            <form th:if="${currentUser != null
-                       and currentUser.role == 'CUSTOMER'
-                       and seller != null
-                       and seller.status == T(com.backend.shop.Model.Seller.SellerStatus).APPROVED}"
-                  th:action="@{/switch-to-seller}"
-                  method="post"
-                  style="display:inline;">
-                <button type="submit">Switch to Seller</button>
-            </form>
-
-            <!-- SELLER -> CUSTOMER -->
-            <form th:if="${currentUser != null and currentUser.role == 'SELLER'}"
-                  th:action="@{/switch-to-customer}"
-                  method="post"
-                  style="display:inline;">
-                <button type="submit">Switch to Customer</button>
-            </form>
-
-
-            <!-- LOGOUT -->
-            <form th:if="${currentUser != null}"
-                  th:action="@{/logout}"
-                  method="post"
-                  style="display:inline;">
-                <button type="submit">Logout</button>
-            </form>
-
-            <!-- If not logged in -->
-            <span th:if="${currentUser == null}">
-                <a href="/login">Login</a> |
-                <a href="/register">Register</a>
-            </span>
-
-        </div>
-    </div>
-
-</div>
-
+        <!-- Login / Logout -->
+        <li th:if="${navbarRole == null}">
+            <a th:href="@{/login}">Login</a>
+        </li>
+        <li th:if="${navbarRole != null}">
+            <a th:href="@{/logout}">Logout</a>
+        </li>
+    </ul>
+</nav>
 </body>
 </html>

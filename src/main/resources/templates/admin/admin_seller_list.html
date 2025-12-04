@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All Sellers</title>
+</head>
+<body>
+
+<h1>All Sellers</h1>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>User ID</th>
+        <th>Shop Name</th>
+        <th>Status</th>
+        <th>Review Comment</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="seller : ${sellers}">
+        <td th:text="${seller.userId}"></td>
+        <td th:text="${seller.shopName}"></td>
+        <td th:text="${seller.status}"></td>
+        <td th:text="${seller.reviewComment}"></td>
+        <td>
+            <!-- Only show deactivate when APPROVED -->
+            <form th:if="${seller.status != null and seller.status.name() == 'APPROVED'}"
+                  th:action="@{'/admin/seller-deactivate/' + ${seller.userId}}"
+                  method="post"
+                  style="display:inline;">
+                <button type="submit">Deactivate</button>
+            </form>
+
+            <span th:if="${seller.status != null and seller.status.name() == 'DEACTIVATED'}">
+                Deactivated
+            </span>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

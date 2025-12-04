@@ -1,14 +1,28 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Seller Dashboard</title>
 </head>
 <body>
 
-<h2>Seller Dashboard</h2>
+<h1>Seller Dashboard</h1>
 
-<p>Welcome, Seller!</p>
+<p>Welcome to your seller dashboard.</p>
+
+<!-- Example placeholders for future features -->
+<ul>
+    <li><a th:href="@{/seller/products}">Manage Products (TODO)</a></li>
+    <li><a th:href="@{/seller/orders}">View Orders (TODO)</a></li>
+</ul>
+
+<hr>
+
+<!-- Deactivate seller account -->
+<form th:action="@{/seller/deactivate}" method="post"
+      onsubmit="return confirm('Are you sure you want to deactivate your seller account?');">
+    <button type="submit">Deactivate Seller Account</button>
+</form>
 
 </body>
 </html>

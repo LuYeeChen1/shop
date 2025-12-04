@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-public class AdminSellerReviewController {
+public class AdminSellerController {
 
     @Autowired
     private SellerRepository sellerRepository;
@@ -96,4 +96,53 @@ public class AdminSellerReviewController {
 
         return "redirect:/admin/seller-applications";
     }
+
+    /**
+     * Show ALL sellers to admin, including APPROVED / REJECTED / DEACTIVATED.
+     */
+    @GetMapping("/admin/seller-list")
+    public String viewAllSellers(HttpSession session, Model model) {
+
+        AuthenticatedUser admin = getLoggedInUser(session);
+        if (admin == null) {
+            return "redirect:/login";
+        }
+        if (!"ADMIN".equals(admin.getRole())) {
+            return "access-denied";
+        }
+
+        List<SellerModel> sellers = sellerRepository.findAll();
+        model.addAttribute("sellers", sellers);
+
+        return "admin/admin_seller_list";
+    }
+
+    /**
+     * Deactivate a seller account. (Admin action)
+     */
+    @PostMapping("/admin/seller-deactivate/{userId}")
+    public String deactivateSeller(
+            @PathVariable Long userId,
+            HttpSession session
+    ) {
+        AuthenticatedUser admin = getLoggedInUser(session);
+        if (admin == null) {
+            return "redirect:/login";
+        }
+        if (!"ADMIN".equals(admin.getRole())) {
+            return "access-denied";
+        }
+
+        // Update status to DEACTIVATED
+        sellerRepository.updateStatus(
+                userId,
+                SellerStatus.DEACTIVATED,
+                admin.getEmail(),
+                "Seller account deactivated by admin."
+        );
+
+        return "redirect:/admin/seller-list";
+    }
+
+
 }
