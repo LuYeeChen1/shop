@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Apply to Become a Seller</title>
+</head>
+<body>
+
+<h2>Apply to Become a Seller</h2>
+
+<form th:action="@{/seller/apply}" th:object="${sellerApplicationDTO}" method="post">
+
+    <div>
+        <label for="shopName">Shop Name:</label>
+        <input id="shopName" type="text" th:field="*{shopName}" />
+        <span th:if="${#fields.hasErrors('shopName')}"
+              th:errors="*{shopName}">Shop name error</span>
+    </div>
+
+    <div>
+        <label for="shopDescription">Shop Description:</label><br>
+        <textarea id="shopDescription" th:field="*{shopDescription}" rows="4" cols="40"></textarea>
+        <span th:if="${#fields.hasErrors('shopDescription')}"
+              th:errors="*{shopDescription}">Description error</span>
+    </div>
+
+    <div>
+        <label for="shopLogoUrl">Shop Logo URL (optional):</label>
+        <input id="shopLogoUrl" type="text" th:field="*{shopLogoUrl}" />
+        <span th:if="${#fields.hasErrors('shopLogoUrl')}"
+              th:errors="*{shopLogoUrl}">Logo URL error</span>
+    </div>
+
+    <div>
+        <label for="businessRegistrationNumber">Business Registration Number:</label>
+        <input id="businessRegistrationNumber" type="text" th:field="*{businessRegistrationNumber}" />
+        <span th:if="${#fields.hasErrors('businessRegistrationNumber')}"
+              th:errors="*{businessRegistrationNumber}">BRN error</span>
+    </div>
+
+    <div>
+        <label for="businessAddress">Business Address:</label><br>
+        <textarea id="businessAddress" th:field="*{businessAddress}" rows="3" cols="40"></textarea>
+        <span th:if="${#fields.hasErrors('businessAddress')}"
+              th:errors="*{businessAddress}">Address error</span>
+    </div>
+
+    <div>
+        <label for="contactNumber">Contact Number:</label>
+        <input id="contactNumber" type="text" th:field="*{contactNumber}" />
+        <span th:if="${#fields.hasErrors('contactNumber')}"
+              th:errors="*{contactNumber}">Contact error</span>
+    </div>
+
+    <div>
+        <button type="submit">Submit Application</button>
+        <a th:href="@{/customer/dashboard}">Cancel</a>
+    </div>
+
+</form>
+
+</body>
+</html>

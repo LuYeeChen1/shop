@@ -12,33 +12,33 @@
 <h1>Customer Dashboard</h1>
 
 <section>
-    <p th:text="'Welcome, ' + ${user.username} + '!'">Welcome, User!</p>
+    <p th:text="'Welcome, ' + ${dashboard.username} + '!'">Welcome, User!</p>
 </section>
 
 <hr>
 
 <section>
     <!-- No seller record yet -->
-    <div th:if="${hasSellerRecord} == false">
+    <div th:if="${dashboard.sellerStatus} == 'NONE' and !${dashboard.sellerExists}">
         <h2>Seller Application</h2>
         <p>You are currently not a seller.</p>
-        <form th:action="@{/customer/apply-seller}" method="post">
+        <form th:action="@{/seller/apply}" method="get">
             <button type="submit">Become a Seller</button>
         </form>
     </div>
 
-    <!-- Has seller record -->
-    <div th:if="${hasSellerRecord}">
+    <!-- Has seller record (any status except pure NONE with no record) -->
+    <div th:if="${dashboard.sellerExists}">
         <h2>Your Seller Status</h2>
 
         <!-- Pending -->
-        <div th:if="${seller.status != null and seller.status.name() == 'PENDING'}">
+        <div th:if="${dashboard.sellerStatus} == 'PENDING'">
             <p>Your seller status: <strong>Pending</strong></p>
             <p>Your application is under review by the admin.</p>
         </div>
 
         <!-- Approved -->
-        <div th:if="${seller.status != null and seller.status.name() == 'APPROVED'}">
+        <div th:if="${dashboard.sellerStatus} == 'APPROVED'">
             <p>Your seller status: <strong>Approved</strong></p>
             <p>You can now manage your shop and products.</p>
             <a th:href="@{/seller/dashboard}">
@@ -47,23 +47,26 @@
         </div>
 
         <!-- Rejected -->
-        <div th:if="${seller.status != null and seller.status.name() == 'REJECTED'}">
+        <div th:if="${dashboard.sellerStatus} == 'REJECTED'">
             <p>Your seller status: <strong>Rejected</strong></p>
-            <p th:text="'Reason: ' + ${seller.reviewComment}">Reason: Example comment</p>
+            <p th:if="${dashboard.reviewComment != null}"
+               th:text="'Reason: ' + ${dashboard.reviewComment}">
+                Reason: Example comment
+            </p>
 
-            <!-- Optional: allow re-apply -->
-            <form th:action="@{/customer/reapply-seller}" method="post">
+            <!-- Allow re-apply -->
+            <form th:action="@{/seller/apply}" method="get">
                 <button type="submit">Re-apply as Seller</button>
             </form>
         </div>
 
         <!-- Deactivated -->
-        <div th:if="${seller.status != null and seller.status.name() == 'DEACTIVATED'}">
+        <div th:if="${dashboard.sellerStatus} == 'DEACTIVATED'">
             <p>Your seller status: <strong>Deactivated</strong></p>
             <p>Your seller account has been deactivated. You are currently a normal customer.</p>
 
-            <!-- You may allow apply again -->
-            <form th:action="@{/customer/reapply-seller}" method="post">
+            <!-- Allow apply again -->
+            <form th:action="@{/seller/apply}" method="get">
                 <button type="submit">Apply Again as Seller</button>
             </form>
         </div>

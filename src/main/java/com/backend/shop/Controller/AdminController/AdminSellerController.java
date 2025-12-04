@@ -4,6 +4,7 @@ import com.backend.shop.Model.Session.AuthenticatedUser;
 import com.backend.shop.Model.Seller.SellerModel;
 import com.backend.shop.Model.Seller.SellerStatus;
 import com.backend.shop.Repository.SellerRepository;
+import com.backend.shop.Service.SellerService.SellerAdminService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,9 @@ public class AdminSellerController {
 
     @Autowired
     private SellerRepository sellerRepository;
+
+    @Autowired
+    private SellerAdminService sellerAdminService;
 
     // Helper: get logged-in user from session
     private AuthenticatedUser getLoggedInUser(HttpSession session) {
@@ -41,7 +45,6 @@ public class AdminSellerController {
             return "access-denied";
         }
 
-        // Only pending applications
         List<SellerModel> applications = sellerRepository.findByStatus(SellerStatus.PENDING);
         model.addAttribute("applications", applications);
 
@@ -64,8 +67,7 @@ public class AdminSellerController {
             return "access-denied";
         }
 
-        // Update seller status to APPROVED
-        sellerRepository.updateStatus(userId, SellerStatus.APPROVED, admin.getEmail(), "Approved");
+        sellerAdminService.approveSeller(userId, admin.getEmail(), "Approved");
 
         return "redirect:/admin/seller-applications";
     }
@@ -87,18 +89,13 @@ public class AdminSellerController {
             return "access-denied";
         }
 
-        if (comment == null || comment.isBlank()) {
-            comment = "Rejected by admin";
-        }
-
-        // Update seller status to REJECTED
-        sellerRepository.updateStatus(userId, SellerStatus.REJECTED, admin.getEmail(), comment);
+        sellerAdminService.rejectSeller(userId, admin.getEmail(), comment);
 
         return "redirect:/admin/seller-applications";
     }
 
     /**
-     * Show ALL sellers to admin, including APPROVED / REJECTED / DEACTIVATED.
+     * Show all sellers (any status) to admin.
      */
     @GetMapping("/admin/seller-list")
     public String viewAllSellers(HttpSession session, Model model) {
@@ -118,7 +115,7 @@ public class AdminSellerController {
     }
 
     /**
-     * Deactivate a seller account. (Admin action)
+     * Deactivate an approved seller.
      */
     @PostMapping("/admin/seller-deactivate/{userId}")
     public String deactivateSeller(
@@ -133,16 +130,8 @@ public class AdminSellerController {
             return "access-denied";
         }
 
-        // Update status to DEACTIVATED
-        sellerRepository.updateStatus(
-                userId,
-                SellerStatus.DEACTIVATED,
-                admin.getEmail(),
-                "Seller account deactivated by admin."
-        );
+        sellerAdminService.deactivateSeller(userId, admin.getEmail());
 
         return "redirect:/admin/seller-list";
     }
-
-
 }

@@ -22,7 +22,7 @@ public class SellerRepository {
 
     /**
      * Row mapper for SellerModel.
-     * Converts a database row into a SellerModel object.
+     * Maps one row from the "sellers" table into a SellerModel object.
      */
     private SellerModel mapRowToSeller(ResultSet rs, int rowNum) throws SQLException {
         SellerModel s = new SellerModel();
@@ -142,6 +142,7 @@ public class SellerRepository {
 
     /**
      * Find seller by user ID.
+     * Returns null if no seller record exists.
      */
     public SellerModel findByUserId(Long userId) {
         String sql = "SELECT * FROM sellers WHERE user_id = ?";
@@ -182,10 +183,10 @@ public class SellerRepository {
      */
     public void updateStatus(Long userId, SellerStatus newStatus, String adminEmail, String comment) {
         String sql = """
-            UPDATE sellers SET 
-                status = ?, 
-                reviewed_by_admin = ?, 
-                review_comment = ?, 
+            UPDATE sellers SET
+                status = ?,
+                reviewed_by_admin = ?,
+                review_comment = ?,
                 reviewed_at = NOW(),
                 updated_at = NOW()
             WHERE user_id = ?
@@ -203,8 +204,8 @@ public class SellerRepository {
      * Count how many applications are still PENDING.
      */
     public int countPending() {
-        String sql = "SELECT COUNT(*) FROM sellers WHERE status = 'PENDING'";
-        Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
+        String sql = "SELECT COUNT(*) FROM sellers WHERE status = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, SellerStatus.PENDING.name());
         return count == null ? 0 : count;
     }
 

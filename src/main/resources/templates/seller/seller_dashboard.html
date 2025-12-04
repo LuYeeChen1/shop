@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Seller Dashboard</title>
@@ -8,21 +8,83 @@
 
 <h1>Seller Dashboard</h1>
 
-<p>Welcome to your seller dashboard.</p>
-
-<!-- Example placeholders for future features -->
-<ul>
-    <li><a th:href="@{/seller/products}">Manage Products (TODO)</a></li>
-    <li><a th:href="@{/seller/orders}">View Orders (TODO)</a></li>
-</ul>
+<section>
+    <p>
+        Logged in as
+        <strong th:text="${sellerDashboard.username}">Seller Name</strong>
+        (<span th:text="${sellerDashboard.email}">email@example.com</span>)
+    </p>
+</section>
 
 <hr>
 
-<!-- Deactivate seller account -->
-<form th:action="@{/seller/deactivate}" method="post"
-      onsubmit="return confirm('Are you sure you want to deactivate your seller account?');">
-    <button type="submit">Deactivate Seller Account</button>
-</form>
+<section>
+    <h2>Shop Information</h2>
+
+    <p>
+        <strong>Shop Name:</strong>
+        <span th:text="${sellerDashboard.shopName}">My Shop</span>
+    </p>
+
+    <p>
+        <strong>Description:</strong><br>
+        <span th:text="${sellerDashboard.shopDescription}">
+            Shop description goes here.
+        </span>
+    </p>
+
+    <p>
+        <strong>Shop Logo URL:</strong>
+        <span th:text="${sellerDashboard.shopLogoUrl}">https://example.com/logo.png</span>
+    </p>
+
+    <p>
+        <strong>Business Registration Number:</strong>
+        <span th:text="${sellerDashboard.businessRegistrationNumber}">BRN-123456</span>
+    </p>
+
+    <p>
+        <strong>Business Address:</strong><br>
+        <span th:text="${sellerDashboard.businessAddress}">
+            Address line details.
+        </span>
+    </p>
+
+    <p>
+        <strong>Contact Number:</strong>
+        <span th:text="${sellerDashboard.contactNumber}">012-3456789</span>
+    </p>
+
+    <p>
+        <strong>Status:</strong>
+        <span th:text="${sellerDashboard.sellerStatus}">APPROVED</span>
+    </p>
+
+    <p th:if="${sellerDashboard.reviewComment != null}">
+        <strong>Admin Comment:</strong>
+        <span th:text="${sellerDashboard.reviewComment}">Some comment</span>
+    </p>
+</section>
+
+<hr>
+
+<section>
+    <h2>Product Management</h2>
+
+    <!-- Placeholder for future product features -->
+    <p>This is where you can manage your products (to be implemented).</p>
+
+    <ul>
+        <li><a href="#">Add New Product (coming soon)</a></li>
+        <li><a href="#">View My Products (coming soon)</a></li>
+    </ul>
+</section>
+
+<hr>
+
+<section>
+    <a th:href="@{/customer/dashboard}">Back to Customer Dashboard</a>
+</section>
 
 </body>
 </html>
