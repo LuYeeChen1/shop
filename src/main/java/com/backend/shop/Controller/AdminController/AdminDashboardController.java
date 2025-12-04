@@ -23,18 +23,19 @@ public class AdminDashboardController {
             return "redirect:/admin/login";
         }
 
-        // Add admin to model for display
+        // Add admin info to page
         model.addAttribute("admin", loggedInAdmin);
 
-        return "admin_dashboard";
+        // Must match templates/admin/admin_dashboard.html
+        return "admin/admin_dashboard";
     }
 
     @GetMapping("/logout")
     public String logoutAdmin(HttpSession session) {
         // Remove admin from session
         session.removeAttribute("loggedInAdmin");
-        // Optionally invalidate the whole session
-        // session.invalidate();
+
+        // Redirect to admin login
         return "redirect:/admin/login?logout";
     }
 }

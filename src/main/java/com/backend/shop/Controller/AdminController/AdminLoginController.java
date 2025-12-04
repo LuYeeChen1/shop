@@ -22,7 +22,7 @@ public class AdminLoginController {
 
     @GetMapping("/admin/login")
     public String showAdminLoginForm(Model model) {
-        return "admin_login";
+        return "admin/admin_login";
     }
 
     @PostMapping("/admin/login")
@@ -36,7 +36,7 @@ public class AdminLoginController {
 
         if (admin == null) {
             model.addAttribute("loginError", "Invalid username or password");
-            return "admin_login";
+            return "admin/admin_login";
         }
 
         // Reuse AuthenticatedUser as a safe session object
