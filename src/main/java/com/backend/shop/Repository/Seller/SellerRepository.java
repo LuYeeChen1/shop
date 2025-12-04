@@ -28,6 +28,15 @@ public class SellerRepository {
         SellerModel s = new SellerModel();
 
         s.setUserId(rs.getLong("user_id"));
+
+        // New: map email from database
+        try {
+            s.setEmail(rs.getString("email"));
+        } catch (SQLException ex) {
+            // If the column does not exist, ignore.
+            // Make sure your table has an "email" column.
+        }
+
         s.setShopName(rs.getString("shop_name"));
         s.setShopDescription(rs.getString("shop_description"));
         s.setShopLogoUrl(rs.getString("shop_logo_url"));
@@ -82,6 +91,7 @@ public class SellerRepository {
         String sql = """
             INSERT INTO sellers (
                 user_id,
+                email,
                 shop_name,
                 shop_description,
                 shop_logo_url,
@@ -92,7 +102,7 @@ public class SellerRepository {
                 applied_at,
                 created_at,
                 updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """;
 
         LocalDateTime now = LocalDateTime.now();
@@ -100,6 +110,7 @@ public class SellerRepository {
 
         jdbcTemplate.update(sql,
                 seller.getUserId(),
+                seller.getEmail(),                  // new: save seller email
                 seller.getShopName(),
                 seller.getShopDescription(),
                 seller.getShopLogoUrl(),
@@ -148,6 +159,17 @@ public class SellerRepository {
         String sql = "SELECT * FROM sellers WHERE user_id = ?";
 
         List<SellerModel> list = jdbcTemplate.query(sql, this::mapRowToSeller, userId);
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    /**
+     * New helper: find seller by email.
+     * Returns null if no seller record exists for this email.
+     */
+    public SellerModel findByEmail(String email) {
+        String sql = "SELECT * FROM sellers WHERE email = ?";
+
+        List<SellerModel> list = jdbcTemplate.query(sql, this::mapRowToSeller, email);
         return list.isEmpty() ? null : list.get(0);
     }
 

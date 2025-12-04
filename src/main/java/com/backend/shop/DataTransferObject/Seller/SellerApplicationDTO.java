@@ -4,8 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 /**
- * DTO for seller application form.
- * Contains only fields required from the customer when applying as a seller.
+ * DTO used when a customer applies to become a seller.
+ * Collects only the information required from the user.
  */
 public class SellerApplicationDTO {
 
@@ -16,7 +16,7 @@ public class SellerApplicationDTO {
     @NotBlank(message = "Shop description is required")
     private String shopDescription;
 
-    // Optional: URL or path to logo image
+    // Optional: customer can provide a logo URL (or later we upload to S3)
     @Size(max = 500, message = "Shop logo URL must not exceed 500 characters")
     private String shopLogoUrl;
 
@@ -31,7 +31,7 @@ public class SellerApplicationDTO {
     @Size(max = 50, message = "Contact number must not exceed 50 characters")
     private String contactNumber;
 
-    // Getters and setters
+    // ===== Getters and Setters =====
 
     public String getShopName() {
         return shopName;

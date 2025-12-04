@@ -15,25 +15,28 @@
         <th>Shop Name</th>
         <th>Status</th>
         <th>Review Comment</th>
-        <th>Actions</th>
+        <th>Action</th>
     </tr>
     </thead>
+
     <tbody>
-    <tr th:each="seller : ${sellers}">
-        <td th:text="${seller.userId}"></td>
-        <td th:text="${seller.shopName}"></td>
-        <td th:text="${seller.status}"></td>
-        <td th:text="${seller.reviewComment}"></td>
+    <tr th:each="s : ${sellers}">
+        <td th:text="${s.userId}"></td>
+        <td th:text="${s.shopName}"></td>
+        <td th:text="${s.status}"></td>
+        <td th:text="${s.reviewComment}"></td>
+
         <td>
-            <!-- Only show deactivate when APPROVED -->
-            <form th:if="${seller.status != null and seller.status.name() == 'APPROVED'}"
-                  th:action="@{'/admin/seller-deactivate/' + ${seller.userId}}"
+            <!-- APPROVED → show Deactivate button -->
+            <form th:if="${s.status == T(com.backend.shop.Model.Seller.SellerStatus).APPROVED}"
+                  th:action="@{'/admin/seller-deactivate/' + ${s.userId}}"
                   method="post"
                   style="display:inline;">
                 <button type="submit">Deactivate</button>
             </form>
 
-            <span th:if="${seller.status != null and seller.status.name() == 'DEACTIVATED'}">
+            <!-- DEACTIVATED → show label -->
+            <span th:if="${s.status == T(com.backend.shop.Model.Seller.SellerStatus).DEACTIVATED}">
                 Deactivated
             </span>
         </td>

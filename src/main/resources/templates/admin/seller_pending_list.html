@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pending Seller Applications</title>
+</head>
+<body>
+
+<h1>Pending Seller Applications</h1>
+
+<p>
+    Admin:
+    <span th:text="${admin.username}">admin</span>
+    (<span th:text="${admin.email}">admin@example.com</span>)
+</p>
+
+<hr>
+
+<div th:if="${#lists.isEmpty(pendingSellers)}">
+    <p>No pending seller applications.</p>
+</div>
+
+<div th:if="${!#lists.isEmpty(pendingSellers)}">
+    <table border="1" cellpadding="6" cellspacing="0">
+        <thead>
+        <tr>
+            <th>User ID</th>
+            <th>Email</th>
+            <th>Shop Name</th>
+            <th>Business Reg. No</th>
+            <th>Applied At</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="s : ${pendingSellers}">
+            <td th:text="${s.userId}">1</td>
+            <td th:text="${s.email}">user@example.com</td>
+            <td th:text="${s.shopName}">Shop Name</td>
+            <td th:text="${s.businessRegistrationNumber}">BRN123</td>
+            <td th:text="${s.appliedAt}">2025-01-01T12:00</td>
+            <td>
+                <a th:href="@{/admin/sellers/review(userId=${s.userId})}">
+                    <button type="button">Review</button>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

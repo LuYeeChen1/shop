@@ -16,6 +16,10 @@ public class SellerModel {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
+    // Email of the seller (same as the user's email)
+    @Column(name = "email", length = 255)
+    private String email;
+
     @Column(name = "shop_name", length = 200)
     private String shopName;
 
@@ -63,21 +67,19 @@ public class SellerModel {
 
     // Getters & Setters
 
-    public Long getUserId() {
-        return userId;
-    }
+    public Long getUserId() { return userId; }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
+    public void setUserId(Long userId) { this.userId = userId; }
+
+    public String getEmail() { return email; }
+
+    public void setEmail(String email) { this.email = email; }
 
     public String getShopName() {
         return shopName;
     }
 
-    public void setShopName(String shopName) {
-        this.shopName = shopName;
-    }
+    public void setShopName(String shopName) {this.shopName = shopName; }
 
     public String getShopDescription() {
         return shopDescription;

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirm Delete Product</title>
+</head>
+<body>
+
+<h1>Confirm Delete Product</h1>
+
+<section>
+    <p>
+        Seller:
+        <strong th:text="${sellerUsername}">Seller Name</strong>
+        (<span th:text="${sellerEmail}">email@example.com</span>)
+    </p>
+</section>
+
+<hr>
+
+<section>
+    <h2>Product Details</h2>
+
+    <p><strong>ID:</strong> <span th:text="${product.productId}">1</span></p>
+    <p><strong>Name:</strong> <span th:text="${product.name}">Sample Product</span></p>
+    <p><strong>Description:</strong> <span th:text="${product.description}">Product description</span></p>
+    <p><strong>Price:</strong> <span th:text="${product.price}">0.00</span></p>
+    <p><strong>Stock:</strong> <span th:text="${product.stockQuantity}">0</span></p>
+    <p><strong>Category:</strong> <span th:text="${product.category}">Category</span></p>
+    <p><strong>Image URL:</strong> <span th:text="${product.imageUrl}">http://example.com/image.jpg</span></p>
+    <p><strong>Created At:</strong> <span th:text="${product.createdAt}">2025-01-01 12:00</span></p>
+</section>
+
+<hr>
+
+<section>
+    <p>Are you sure you want to delete this product?</p>
+
+    <!-- Confirm delete (POST to /seller/products/delete) -->
+    <form th:action="@{/seller/products/delete}" method="post" style="display:inline;">
+        <input type="hidden" name="productId" th:value="${product.productId}"/>
+        <button type="submit">Yes, delete this product</button>
+    </form>
+
+    &nbsp;
+
+    <!-- Cancel: back to product list -->
+    <a th:href="@{/seller/products}">
+        <button type="button">Cancel</button>
+    </a>
+</section>
+
+</body>
+</html>

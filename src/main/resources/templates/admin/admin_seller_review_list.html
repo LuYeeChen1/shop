@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Pending Seller Applications</title>
+</head>
+<body>
+
+<h1>Pending Seller Applications</h1>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>User ID</th>
+        <th>Email</th>
+        <th>Shop Name</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="s : ${applications}">
+        <td th:text="${s.userId}"></td>
+        <td th:text="${s.email}"></td>
+        <td th:text="${s.shopName}"></td>
+
+        <td>
+            <a th:href="@{'/admin/seller-review/' + ${s.userId}}">
+                <button type="button">Review</button>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

@@ -35,12 +35,16 @@
 
     <p>
         <strong>Shop Logo URL:</strong>
-        <span th:text="${sellerDashboard.shopLogoUrl}">https://example.com/logo.png</span>
+        <span th:text="${sellerDashboard.shopLogoUrl}">
+            https://example.com/logo.png
+        </span>
     </p>
 
     <p>
         <strong>Business Registration Number:</strong>
-        <span th:text="${sellerDashboard.businessRegistrationNumber}">BRN-123456</span>
+        <span th:text="${sellerDashboard.businessRegistrationNumber}">
+            BRN-123456
+        </span>
     </p>
 
     <p>
@@ -52,12 +56,16 @@
 
     <p>
         <strong>Contact Number:</strong>
-        <span th:text="${sellerDashboard.contactNumber}">012-3456789</span>
+        <span th:text="${sellerDashboard.contactNumber}">
+            012-3456789
+        </span>
     </p>
 
     <p>
         <strong>Status:</strong>
-        <span th:text="${sellerDashboard.sellerStatus}">APPROVED</span>
+        <span th:text="${sellerDashboard.sellerStatus}">
+            APPROVED
+        </span>
     </p>
 
     <p th:if="${sellerDashboard.reviewComment != null}">
@@ -77,13 +85,15 @@
 <section>
     <h2>Product Management</h2>
 
-    <!-- Placeholder for future product features -->
-    <p>This is where you can manage your products (to be implemented).</p>
-
-    <ul>
-        <li><a href="#">Add New Product (coming soon)</a></li>
-        <li><a href="#">View My Products (coming soon)</a></li>
-    </ul>
+    <p>
+        <a th:href="@{/seller/products}">
+            <button type="button">View My Products</button>
+        </a>
+        &nbsp;
+        <a th:href="@{/seller/products/new}">
+            <button type="button">Add New Product</button>
+        </a>
+    </p>
 </section>
 
 <hr>

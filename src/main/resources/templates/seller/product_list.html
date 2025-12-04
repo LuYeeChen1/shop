@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Products</title>
+</head>
+<body>
+
+<h1>My Products</h1>
+
+<section>
+    <p>
+        Seller:
+        <strong th:text="${sellerProducts.sellerUsername}">Seller Name</strong>
+        (<span th:text="${sellerProducts.sellerEmail}">email@example.com</span>)
+    </p>
+</section>
+
+<hr>
+
+<section>
+    <p>
+        <a th:href="@{/seller/products/new}">
+            <button type="button">Add New Product</button>
+        </a>
+
+        &nbsp;
+
+        <a th:href="@{/seller/dashboard}">
+            <button type="button">Back to Seller Dashboard</button>
+        </a>
+    </p>
+</section>
+
+<hr>
+
+<section th:if="${sellerProducts.products != null and !sellerProducts.products.isEmpty()}">
+
+    <h2>Product List</h2>
+
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Category</th>
+            <th>Created At</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="p : ${sellerProducts.products}">
+            <td th:text="${p.productId}">1</td>
+            <td th:text="${p.name}">Sample Product</td>
+            <td th:text="${p.price}">0.00</td>
+            <td th:text="${p.stockQuantity}">0</td>
+            <td th:text="${p.category}">Category</td>
+            <td th:text="${p.createdAt}">2025-01-01 12:00</td>
+
+            <td>
+
+                <!-- Edit Button -->
+                <a th:href="@{/seller/products/edit(productId=${p.productId})}">
+                    <button type="button">Edit</button>
+                </a>
+
+                <!-- Delete Button -> go to confirm page -->
+                <a th:href="@{/seller/products/delete-confirm(productId=${p.productId})}">
+                    <button type="button">Delete</button>
+                </a>
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</section>
+
+<section th:if="${sellerProducts.products == null or sellerProducts.products.isEmpty()}">
+    <p>No products found.</p>
+</section>
+
+</body>
+</html>

@@ -11,6 +11,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+/**
+ * Controller for the customer dashboard.
+ * UI will change based on sellerStatus field in CustomerDashboardDTO.
+ */
 @Controller
 @RequestMapping("/customer")
 public class CustomerDashboardController {
@@ -24,7 +28,7 @@ public class CustomerDashboardController {
 
     /**
      * Show the customer dashboard.
-     * UI will change based on sellerStatus from DTO.
+     * Exposes a CustomerDashboardDTO to the view as "dashboard".
      */
     @GetMapping("/dashboard")
     public String showCustomerDashboard(HttpSession session, Model model) {
@@ -45,7 +49,12 @@ public class CustomerDashboardController {
         dashboardDTO.setUsername(customer.getUsername());
         dashboardDTO.setEmail(customer.getEmail());
 
-        // Default values
+        // Default values (no seller record)
+        // sellerStatus:
+        //   "NONE"     -> no seller record yet
+        //   "PENDING"  -> waiting for admin review
+        //   "APPROVED" -> can enter seller dashboard
+        //   "REJECTED" -> rejected, reviewComment may contain reason
         dashboardDTO.setSellerStatus("NONE");
         dashboardDTO.setSellerExists(false);
         dashboardDTO.setReviewComment(null);
@@ -60,6 +69,7 @@ public class CustomerDashboardController {
             String statusValue = (status != null) ? status.name() : "NONE";
             dashboardDTO.setSellerStatus(statusValue);
 
+            // Reason from admin if REJECTED or any comment exists
             dashboardDTO.setReviewComment(seller.getReviewComment());
         }
 

@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.LocalDateTime;
 
+/**
+ * Controller that handles seller application flow for a logged-in customer.
+ */
 @Controller
 @RequestMapping("/seller")
 public class SellerApplicationController {
@@ -29,22 +32,26 @@ public class SellerApplicationController {
 
     /**
      * Show the seller application form.
+     * Only accessible if a customer is logged in and has not applied yet.
      */
     @GetMapping("/apply")
     public String showApplyForm(HttpSession session, Model model) {
 
+        // Read logged-in user from session
         Object sessionUser = session.getAttribute("loggedInUser");
         if (!(sessionUser instanceof AuthenticatedUser)) {
+            // Not logged in -> redirect to login
             return "redirect:/login";
         }
 
         AuthenticatedUser loggedInUser = (AuthenticatedUser) sessionUser;
 
-        // Optional: if seller record already exists, redirect back to dashboard
+        // If seller record already exists for this user, redirect to customer dashboard
         if (sellerRepository.existsByUserId(loggedInUser.getUserId())) {
             return "redirect:/customer/dashboard";
         }
 
+        // Prepare empty DTO for the form
         SellerApplicationDTO dto = new SellerApplicationDTO();
         model.addAttribute("sellerApplicationDTO", dto);
 
@@ -63,21 +70,26 @@ public class SellerApplicationController {
             Model model
     ) {
 
+        // Read logged-in user
         Object sessionUser = session.getAttribute("loggedInUser");
-        if (!(sessionUser instanceof AuthenticatedUser)) {
+        if (!(sessionUser instanceof AuthenticatedUser loggedInUser)) {
             return "redirect:/login";
         }
 
-        AuthenticatedUser loggedInUser = (AuthenticatedUser) sessionUser;
-
+        // If validation fails, show form again with errors
         if (bindingResult.hasErrors()) {
-            // Validation failed, show form again with errors
             return "seller/apply_seller";
         }
 
-        // Create SellerModel and fill from DTO
+        // Double check whether seller record already exists
+        if (sellerRepository.existsByUserId(loggedInUser.getUserId())) {
+            return "redirect:/customer/dashboard";
+        }
+
+        // Create SellerModel and fill from DTO + session user
         SellerModel seller = new SellerModel();
         seller.setUserId(loggedInUser.getUserId());
+        seller.setEmail(loggedInUser.getEmail()); // link seller to user email
         seller.setShopName(dto.getShopName());
         seller.setShopDescription(dto.getShopDescription());
         seller.setShopLogoUrl(dto.getShopLogoUrl());
@@ -88,10 +100,10 @@ public class SellerApplicationController {
         // Initial status: PENDING
         seller.setStatus(SellerStatus.PENDING);
 
-        // Set applied time
+        // Record applied time
         seller.setAppliedAt(LocalDateTime.now());
 
-        // Save to database via repository (no service)
+        // Save to database via repository (no service layer)
         sellerRepository.save(seller);
 
         // After application, go back to customer dashboard
