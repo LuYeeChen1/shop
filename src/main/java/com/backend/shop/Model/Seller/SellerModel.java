@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 /**
- * SellerModel stores seller-specific profile and verification data.
- * It maps to the "sellers" table and references the users table via user_id.
+ * SellerModel maps to the "sellers" table.
+ * One user can own multiple seller shops (one record per shop).
  */
 @Entity
 @Table(name = "sellers")
@@ -17,11 +17,11 @@ public class SellerModel {
     @Column(name = "seller_id", nullable = false)
     private Long sellerId;
 
-    // Foreign Key to users.user_id (one user can own many sellers/shops)
+    // Foreign key to users.user_id (a user can have multiple shops)
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    // Email of the seller (same as the user's email, redundant for convenience)
+    // Seller email (usually the same as user's email)
     @Column(name = "email", length = 255, nullable = false)
     private String email;
 
@@ -43,7 +43,7 @@ public class SellerModel {
     @Column(name = "contact_number", length = 50)
     private String contactNumber;
 
-    // Seller status: PENDING / APPROVED / REJECTED
+    // Seller status: PENDING / APPROVED / REJECTED / DEACTIVATED
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20)
     private SellerStatus status;

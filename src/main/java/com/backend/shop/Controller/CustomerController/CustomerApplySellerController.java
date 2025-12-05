@@ -1,6 +1,6 @@
 package com.backend.shop.Controller.CustomerController;
 
-import com.backend.shop.DataTransferObject.ApplySellerDTO;
+import com.backend.shop.DataTransferObject.Customer.ApplySellerDTO;
 import com.backend.shop.Model.Seller.SellerModel;
 import com.backend.shop.Model.Seller.SellerStatus;
 import com.backend.shop.Model.Session.AuthenticatedUser;

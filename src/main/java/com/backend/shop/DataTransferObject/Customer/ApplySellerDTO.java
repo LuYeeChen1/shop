@@ -1,13 +1,16 @@
-package com.backend.shop.DataTransferObject;
+package com.backend.shop.DataTransferObject.Customer;
 
 /**
  * ApplySellerDTO is used when a customer applies to open a new shop.
- * It only contains fields that the user is allowed to submit.
+ * It only contains fields that the customer is allowed to submit.
  */
 public class ApplySellerDTO {
 
-    private Long userId;                         // FK to users.user_id
-    private String email;                        // seller email (same as user email)
+    // Which user is applying to open this shop (FK to users.user_id)
+    private Long userId;
+
+    // Seller email (usually same as the user's email)
+    private String email;
 
     private String shopName;
     private String shopDescription;
