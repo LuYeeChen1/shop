@@ -11,14 +11,48 @@
 <hr>
 
 <section>
+    <!-- Shared fragment for product details -->
     <div th:replace="product/product_detail_fragment :: productDetail(${product})"></div>
 </section>
 
 <hr>
 
+<!-- Logged-in user: can see add-to-cart area -->
+<section th:if="${loggedInUser != null}">
+    <p>You are logged in as:
+        <strong th:text="${loggedInUser.username}">username</strong>
+    </p>
+
+    <form th:action="@{/cart/add}" method="post">
+        <input type="hidden" name="productId" th:value="${product.productId}" />
+
+        <label>
+            Quantity:
+            <input type="number" name="quantity" value="1" min="1" />
+        </label>
+
+        <button type="submit">Add to Cart</button>
+    </form>
+</section>
+
+<!-- Guest user: cannot purchase, only view -->
+<section th:if="${loggedInUser == null}">
+    <p>You are browsing as a guest. Please log in to purchase this product.</p>
+
+    <a th:href="@{/login}">
+        <button type="button">Login</button>
+    </a>
+
+    <a th:href="@{/register}">
+        <button type="button">Register</button>
+    </a>
+</section>
+
+<hr>
+
 <section>
-    <a th:href="@{/}">
-        <button type="button">Back to Home</button>
+    <a th:href="@{/products}">
+        <button type="button">Back to Product List</button>
     </a>
 </section>
 

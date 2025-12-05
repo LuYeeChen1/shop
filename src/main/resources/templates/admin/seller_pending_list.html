@@ -16,11 +16,13 @@
 
 <hr>
 
-<div th:if="${#lists.isEmpty(pendingSellers)}">
+<!-- Case: No pending sellers -->
+<div th:if="${#lists.isEmpty(sellers)}">
     <p>No pending seller applications.</p>
 </div>
 
-<div th:if="${!#lists.isEmpty(pendingSellers)}">
+<!-- Case: Pending sellers exist -->
+<div th:if="${!#lists.isEmpty(sellers)}">
     <table border="1" cellpadding="6" cellspacing="0">
         <thead>
         <tr>
@@ -32,15 +34,18 @@
             <th>Action</th>
         </tr>
         </thead>
+
         <tbody>
-        <tr th:each="s : ${pendingSellers}">
+        <tr th:each="s : ${sellers}">
             <td th:text="${s.userId}">1</td>
             <td th:text="${s.email}">user@example.com</td>
             <td th:text="${s.shopName}">Shop Name</td>
             <td th:text="${s.businessRegistrationNumber}">BRN123</td>
             <td th:text="${s.appliedAt}">2025-01-01T12:00</td>
+
             <td>
-                <a th:href="@{/admin/sellers/review(userId=${s.userId})}">
+                <!-- Must match AdminSellerController @GetMapping("/{userId}/review") -->
+                <a th:href="@{'/admin/sellers/' + ${s.userId} + '/review'}">
                     <button type="button">Review</button>
                 </a>
             </td>
@@ -48,6 +53,12 @@
         </tbody>
     </table>
 </div>
+
+<hr>
+
+<a th:href="@{/admin/dashboard}">
+    <button type="button">Back to Admin Dashboard</button>
+</a>
 
 </body>
 </html>

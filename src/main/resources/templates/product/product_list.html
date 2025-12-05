@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Product List</title>
+</head>
+<body>
+
+<h1>Product List</h1>
+
+<hr>
+
+<section th:if="${products != null and !products.isEmpty()}">
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+        <tr>
+            <th>Product ID</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Category</th>
+            <th>Created At</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${products}">
+            <td th:text="${p.productId}">1</td>
+            <td th:text="${p.name}">Sample Product</td>
+            <td th:text="${p.price}">0.00</td>
+            <td th:text="${p.stockQuantity}">0</td>
+            <td th:text="${p.category}">Category</td>
+            <td th:text="${p.createdAt}">2025-01-01 12:00</td>
+            <td>
+                <a th:href="@{/products/detail(productId=${p.productId})}">
+                    <button type="button">View Details</button>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+<section th:if="${products == null or products.isEmpty()}">
+    <p>No products available.</p>
+</section>
+
+<hr>
+
+<section>
+    <a th:href="@{/welcome}">
+        <button type="button">Back to Welcome</button>
+    </a>
+</section>
+
+</body>
+</html>

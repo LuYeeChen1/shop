@@ -1,75 +1,84 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Customer Dashboard</title>
 </head>
 <body>
 
-<!-- Include navbar fragment if you use it -->
-<!-- <div th:replace="fragments/navbar :: navbar"></div> -->
-
 <h1>Customer Dashboard</h1>
 
+<p>
+    Logged in as:
+    <strong th:text="${dashboard.username}">username</strong>
+</p>
+
+<hr>
+
 <section>
-    <p th:text="'Welcome, ' + ${dashboard.username} + '!'">Welcome, User!</p>
+    <h2>Account</h2>
+
+    <a th:href="@{/logout}">
+        <button type="button">Logout</button>
+    </a>
 </section>
 
 <hr>
 
 <section>
-    <!-- No seller record yet -->
-    <div th:if="${dashboard.sellerStatus} == 'NONE' and !dashboard.sellerExists">
-        <h2>Seller Application</h2>
+    <h2>Shopping</h2>
+
+    <!-- Browse product list -->
+    <a th:href="@{/products}">
+        <button type="button">Browse Products</button>
+    </a>
+
+    <!-- View cart -->
+    <a th:href="@{/cart}">
+        <button type="button">My Cart</button>
+    </a>
+</section>
+
+<hr>
+
+<section>
+    <h2>Seller Options</h2>
+
+    <!-- Case 1: No seller record yet -->
+    <div th:if="${!dashboard.sellerExists}">
         <p>You are currently not a seller.</p>
-        <form th:action="@{/seller/apply}" method="get">
-            <button type="submit">Become a Seller</button>
-        </form>
+
+        <a th:href="@{/customer/seller/apply}">
+            <button type="button">Apply to Become a Seller</button>
+        </a>
     </div>
 
-    <!-- Has seller record (any status) -->
-    <div th:if="${dashboard.sellerExists}">
-        <h2>Your Seller Status</h2>
+    <!-- Case 2: Seller exists and status = PENDING -->
+    <div th:if="${dashboard.sellerExists and dashboard.sellerStatus == 'PENDING'}">
+        <p>Your seller application is pending approval.</p>
+    </div>
 
-        <!-- Pending -->
-        <div th:if="${dashboard.sellerStatus} == 'PENDING'">
-            <p>Your seller status: <strong>Pending</strong></p>
-            <p>Your application is under review by the admin.</p>
-        </div>
+    <!-- Case 3: Seller exists and status = REJECTED -->
+    <div th:if="${dashboard.sellerExists and dashboard.sellerStatus == 'REJECTED'}">
+        <p>Your seller application was rejected.</p>
 
-        <!-- Approved -->
-        <div th:if="${dashboard.sellerStatus} == 'APPROVED'">
-            <p>Your seller status: <strong>Approved</strong></p>
-            <p>You can now manage your shop and products.</p>
-            <a th:href="@{/seller/dashboard}">
-                <button type="button">Go to Seller Dashboard</button>
-            </a>
-        </div>
+        <p th:if="${dashboard.reviewComment != null}"
+           th:text="'Reason: ' + ${dashboard.reviewComment}">
+            Reason here
+        </p>
 
-        <!-- Rejected -->
-        <div th:if="${dashboard.sellerStatus} == 'REJECTED'">
-            <p>Your seller status: <strong>Rejected</strong></p>
-            <p th:if="${dashboard.reviewComment != null}"
-               th:text="'Reason: ' + ${dashboard.reviewComment}">
-                Reason: Example comment
-            </p>
+        <a th:href="@{/customer/seller/apply}">
+            <button type="button">Reapply</button>
+        </a>
+    </div>
 
-            <!-- Allow re-apply -->
-            <form th:action="@{/seller/apply}" method="get">
-                <button type="submit">Re-apply as Seller</button>
-            </form>
-        </div>
+    <!-- Case 4: Seller exists and status = APPROVED -->
+    <div th:if="${dashboard.sellerExists and dashboard.sellerStatus == 'APPROVED'}">
+        <p>You are an approved seller.</p>
 
-        <!-- Deactivated (only if you really have this status in enum / DB) -->
-        <div th:if="${dashboard.sellerStatus} == 'DEACTIVATED'">
-            <p>Your seller status: <strong>Deactivated</strong></p>
-            <p>Your seller account has been deactivated. You are currently a normal customer.</p>
-
-            <!-- Allow apply again -->
-            <form th:action="@{/seller/apply}" method="get">
-                <button type="submit">Apply Again as Seller</button>
-            </form>
-        </div>
+        <a th:href="@{/seller/dashboard}">
+            <button type="button">Enter Seller Mode</button>
+        </a>
     </div>
 </section>
 

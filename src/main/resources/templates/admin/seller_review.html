@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Review Seller Application</title>
+</head>
+<body>
+
+<h1>Review Seller Application</h1>
+
+<p>
+    Admin:
+    <strong th:text="${admin.username}">admin</strong>
+    (<span th:text="${admin.email}">admin@example.com</span>)
+</p>
+
+<hr>
+
+<section>
+    <h2>Seller Information</h2>
+
+    <p><strong>User ID:</strong> <span th:text="${seller.userId}">1</span></p>
+    <p><strong>Email:</strong> <span th:text="${seller.email}">email@example.com</span></p>
+    <p><strong>Shop Name:</strong> <span th:text="${seller.shopName}">Shop Name</span></p>
+    <p><strong>Shop Description:</strong> <span th:text="${seller.shopDescription}">Description</span></p>
+    <p><strong>Business Reg. No.:</strong> <span th:text="${seller.businessRegistrationNumber}">BR123</span></p>
+    <p><strong>Business Address:</strong> <span th:text="${seller.businessAddress}">Address</span></p>
+    <p><strong>Contact Number:</strong> <span th:text="${seller.contactNumber}">0123456789</span></p>
+    <p><strong>Status:</strong> <span th:text="${seller.status}">PENDING</span></p>
+    <p><strong>Applied At:</strong> <span th:text="${seller.appliedAt}">2025-01-01</span></p>
+</section>
+
+<hr>
+
+<section>
+    <h2>Approve Application</h2>
+    <form th:action="@{'/admin/sellers/' + ${seller.userId} + '/approve'}" method="post">
+        <button type="submit">Approve</button>
+    </form>
+</section>
+
+<hr>
+
+<section>
+    <h2>Reject Application</h2>
+    <form th:action="@{'/admin/sellers/' + ${seller.userId} + '/reject'}" method="post">
+        <label for="comment">Reason (optional but recommended):</label><br>
+        <textarea id="comment" name="comment" rows="4" cols="50"
+                  placeholder="Enter rejection reason here..."></textarea><br><br>
+        <button type="submit">Reject</button>
+    </form>
+</section>
+
+<hr>
+
+<a th:href="@{/admin/sellers/pending}">
+    <button type="button">Back to Pending List</button>
+</a>
+
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Cart</title>
+</head>
+<body>
+
+<h1>Your Cart</h1>
+
+<p>
+    Logged in as:
+    <strong th:text="${username}">username</strong>
+</p>
+
+<hr>
+
+<section th:if="${cartItems != null and !cartItems.isEmpty()}">
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+        <tr>
+            <th>Product ID</th>
+            <th>Product Name</th>
+            <th>Price (per unit)</th>
+            <th>Quantity</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${cartItems}">
+            <td th:text="${item.productId}">1</td>
+            <td th:text="${item.productName}">Sample Product</td>
+            <td th:text="${item.price}">0.00</td>
+            <td th:text="${item.quantity}">1</td>
+            <td>
+                <!-- Decrease quantity -->
+                <form th:action="@{/cart/decrease}" method="post" style="display:inline;">
+                    <input type="hidden" name="productId" th:value="${item.productId}"/>
+                    <button type="submit">-</button>
+                </form>
+
+                <!-- Increase quantity -->
+                <form th:action="@{/cart/increase}" method="post" style="display:inline;">
+                    <input type="hidden" name="productId" th:value="${item.productId}"/>
+                    <button type="submit">+</button>
+                </form>
+
+                <!-- Remove item completely -->
+                <form th:action="@{/cart/remove}" method="post" style="display:inline;">
+                    <input type="hidden" name="productId" th:value="${item.productId}"/>
+                    <button type="submit">Remove</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <form th:action="@{/cart/clear}" method="post" style="margin-top: 10px;">
+        <button type="submit">Clear Cart</button>
+    </form>
+</section>
+
+<section th:if="${cartItems == null or cartItems.isEmpty()}">
+    <p>Your cart is currently empty.</p>
+</section>
+
+<hr>
+
+<section>
+    <a th:href="@{/products}">
+        <button type="button">Back to Product List</button>
+    </a>
+</section>
+
+</body>
+</html>

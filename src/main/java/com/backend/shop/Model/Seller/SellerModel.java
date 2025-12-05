@@ -11,16 +11,21 @@ import java.time.LocalDateTime;
 @Table(name = "sellers")
 public class SellerModel {
 
-    // Primary Key + Foreign Key to users.id
+    // Primary Key: each shop has its own seller_id
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "seller_id", nullable = false)
+    private Long sellerId;
+
+    // Foreign Key to users.user_id (one user can own many sellers/shops)
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    // Email of the seller (same as the user's email)
-    @Column(name = "email", length = 255)
+    // Email of the seller (same as the user's email, redundant for convenience)
+    @Column(name = "email", length = 255, nullable = false)
     private String email;
 
-    @Column(name = "shop_name", length = 200)
+    @Column(name = "shop_name", length = 200, nullable = false)
     private String shopName;
 
     @Column(name = "shop_description", length = 500)
@@ -65,21 +70,41 @@ public class SellerModel {
     public SellerModel() {
     }
 
+    // ============================
     // Getters & Setters
+    // ============================
 
-    public Long getUserId() { return userId; }
+    public Long getSellerId() {
+        return sellerId;
+    }
 
-    public void setUserId(Long userId) { this.userId = userId; }
+    public void setSellerId(Long sellerId) {
+        this.sellerId = sellerId;
+    }
 
-    public String getEmail() { return email; }
+    public Long getUserId() {
+        return userId;
+    }
 
-    public void setEmail(String email) { this.email = email; }
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public String getShopName() {
         return shopName;
     }
 
-    public void setShopName(String shopName) {this.shopName = shopName; }
+    public void setShopName(String shopName) {
+        this.shopName = shopName;
+    }
 
     public String getShopDescription() {
         return shopDescription;

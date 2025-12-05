@@ -17,16 +17,18 @@
 -->
 <p>Please choose an action:</p>
 
-<ul>
-    <!-- Link to registration form -->
-    <li><a th:href="@{/register}">Register</a></li>
+<a th:href="@{/login}">
+    <button type="button">Login</button>
+</a>
 
-    <!-- Link to login form -->
-    <li><a th:href="@{/login}">Login</a></li>
+<a th:href="@{/register}">
+    <button type="button">Register</button>
+</a>
 
-    <!-- Link to the list of all users -->
-    <li><a th:href="@{/users}">View Registered Users</a></li>
-</ul>
+<a th:href="@{/products}">
+    <button type="button">Browse Products</button>
+</a>
+
 
 </body>
 </html>

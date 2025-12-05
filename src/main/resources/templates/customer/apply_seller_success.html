@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Application Submitted</title>
+</head>
+<body>
+
+<h1>Seller Application Submitted</h1>
+
+<p>Your application for shop: <strong th:text="${shopName}"></strong> has been submitted.</p>
+
+<p>Status: <strong>PENDING</strong></p>
+
+<a href="/customer/dashboard">
+    <button>Back to Dashboard</button>
+</a>
+
+</body>
+</html>

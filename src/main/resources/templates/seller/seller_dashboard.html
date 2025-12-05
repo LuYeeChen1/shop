@@ -8,16 +8,28 @@
 
 <h1>Seller Dashboard</h1>
 
+<!-- Basic seller info -->
 <section>
     <p>
-        Logged in as
-        <strong th:text="${sellerDashboard.username}">Seller Name</strong>
+        Logged in as:
+        <strong th:text="${sellerDashboard.username}">sellerName</strong>
         (<span th:text="${sellerDashboard.email}">email@example.com</span>)
+    </p>
+
+    <p>
+        Seller Status:
+        <strong th:text="${sellerDashboard.sellerStatus}">APPROVED</strong>
+    </p>
+
+    <p th:if="${sellerDashboard.reviewComment != null}">
+        Review Comment:
+        <span th:text="${sellerDashboard.reviewComment}">Some comment</span>
     </p>
 </section>
 
 <hr>
 
+<!-- Shop information -->
 <section>
     <h2>Shop Information</h2>
 
@@ -27,79 +39,66 @@
     </p>
 
     <p>
-        <strong>Description:</strong><br>
-        <span th:text="${sellerDashboard.shopDescription}">
-            Shop description goes here.
-        </span>
+        <strong>Description:</strong>
+        <span th:text="${sellerDashboard.shopDescription}">Shop description here</span>
     </p>
 
     <p>
-        <strong>Shop Logo URL:</strong>
-        <span th:text="${sellerDashboard.shopLogoUrl}">
-            https://example.com/logo.png
-        </span>
+        <strong>Logo URL:</strong>
+        <span th:text="${sellerDashboard.shopLogoUrl}">http://example.com/logo.png</span>
     </p>
 
     <p>
-        <strong>Business Registration Number:</strong>
-        <span th:text="${sellerDashboard.businessRegistrationNumber}">
-            BRN-123456
-        </span>
+        <strong>Business Registration No:</strong>
+        <span th:text="${sellerDashboard.businessRegistrationNumber}">123456</span>
     </p>
 
     <p>
-        <strong>Business Address:</strong><br>
-        <span th:text="${sellerDashboard.businessAddress}">
-            Address line details.
-        </span>
+        <strong>Business Address:</strong>
+        <span th:text="${sellerDashboard.businessAddress}">Address here</span>
     </p>
 
     <p>
         <strong>Contact Number:</strong>
-        <span th:text="${sellerDashboard.contactNumber}">
-            012-3456789
-        </span>
-    </p>
-
-    <p>
-        <strong>Status:</strong>
-        <span th:text="${sellerDashboard.sellerStatus}">
-            APPROVED
-        </span>
-    </p>
-
-    <p th:if="${sellerDashboard.reviewComment != null}">
-        <strong>Admin Comment:</strong>
-        <span th:text="${sellerDashboard.reviewComment}">Some comment</span>
-    </p>
-
-    <p>
-        <a th:href="@{/seller/profile/edit}">
-            <button type="button">Edit Profile</button>
-        </a>
+        <span th:text="${sellerDashboard.contactNumber}">012-3456789</span>
     </p>
 </section>
 
 <hr>
 
+<!-- Product management -->
 <section>
     <h2>Product Management</h2>
 
-    <p>
-        <a th:href="@{/seller/products}">
-            <button type="button">View My Products</button>
-        </a>
-        &nbsp;
-        <a th:href="@{/seller/products/new}">
-            <button type="button">Add New Product</button>
-        </a>
-    </p>
+    <a th:href="@{/seller/products}">
+        <button type="button">Manage My Products</button>
+    </a>
+
+    <a th:href="@{/seller/products/new}">
+        <button type="button">Add New Product</button>
+    </a>
 </section>
 
 <hr>
 
+<!-- Back to customer mode -->
 <section>
-    <a th:href="@{/customer/dashboard}">Back to Customer Dashboard</a>
+    <h2>Back to Customer Mode</h2>
+
+    <a th:href="@{/customer/dashboard}">
+        <button type="button">Return to Customer Dashboard</button>
+    </a>
+</section>
+
+<hr>
+
+<!-- Account -->
+<section>
+    <h2>Account</h2>
+
+    <a th:href="@{/logout}">
+        <button type="button">Logout</button>
+    </a>
 </section>
 
 </body>

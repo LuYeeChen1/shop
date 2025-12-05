@@ -35,6 +35,14 @@ public class ProductRepository {
     }
 
     /**
+     * Find all products (for public customer list).
+     */
+    public List<ProductModel> findAll() {
+        String sql = "SELECT * FROM product_table ORDER BY created_at DESC";
+        return jdbcTemplate.query(sql, this::mapRowToProduct);
+    }
+
+    /**
      * Find all products by seller user id.
      */
     public List<ProductModel> findBySellerUserId(Long sellerUserId) {

@@ -1,8 +1,8 @@
 package com.backend.shop.DataTransferObject.Customer;
 
 /**
- * DTO for Customer Dashboard view.
- * Contains only data needed by the UI.
+ * DTO for the customer dashboard view.
+ * Controls what the UI should display based on seller status.
  */
 public class CustomerDashboardDTO {
 
@@ -10,17 +10,24 @@ public class CustomerDashboardDTO {
     private String username;
     private String email;
 
-    // Seller related info for UI
-    // NONE / PENDING / APPROVED / REJECTED
-    private String sellerStatus;
-
-    // Whether a seller record exists in the database
+    // Whether a seller record exists in the "sellers" table
     private boolean sellerExists;
 
-    // Admin review comment (mainly for REJECTED case)
+    /**
+     * Seller status for UI:
+     *  - "NONE"     : no seller record yet
+     *  - "PENDING"  : waiting for admin review
+     *  - "APPROVED" : can enter seller dashboard
+     *  - "REJECTED" : rejected by admin
+     */
+    private String sellerStatus;
+
+    // Optional comment from admin if status is REJECTED
     private String reviewComment;
 
-    // Getters and setters
+    // ==========================
+    // Getters and Setters
+    // ==========================
 
     public Long getUserId() {
         return userId;
@@ -46,20 +53,20 @@ public class CustomerDashboardDTO {
         this.email = email;
     }
 
-    public String getSellerStatus() {
-        return sellerStatus;
-    }
-
-    public void setSellerStatus(String sellerStatus) {
-        this.sellerStatus = sellerStatus;
-    }
-
     public boolean isSellerExists() {
         return sellerExists;
     }
 
     public void setSellerExists(boolean sellerExists) {
         this.sellerExists = sellerExists;
+    }
+
+    public String getSellerStatus() {
+        return sellerStatus;
+    }
+
+    public void setSellerStatus(String sellerStatus) {
+        this.sellerStatus = sellerStatus;
     }
 
     public String getReviewComment() {
